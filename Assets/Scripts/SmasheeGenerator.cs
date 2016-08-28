@@ -22,8 +22,9 @@ public class SmasheeGenerator : MonoBehaviour {
 			float x = Random.value * Camera.main.pixelWidth;
 			float y = Random.value * Camera.main.pixelHeight;
 
-			Vector3 pos = new Vector3(x, y, 1);
+			Vector3 pos = new Vector3(x, y, 0);
 			pos = Camera.main.ScreenToWorldPoint(pos);
+			pos.z = 0f;
 
 			Instantiate(smashee, pos, Quaternion.identity);
 
