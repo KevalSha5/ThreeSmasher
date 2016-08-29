@@ -3,32 +3,27 @@ using System.Collections;
 
 public class Smashee : MonoBehaviour {
 
-	Points pointsManager;
+	PointsManager pointsManager;
 
 	public TextMesh number;
 	public Color smashColor;
+	public Color pointsLostColor;
+	public Color pointsGainedColor;
 	public GameObject floatingTextPrefab;
 
-	public int numToSmash = 5;
-	public int numRandomRange = 4; // one sided range on how off random number can be
-	public int numSafeRange = 1; // one sided range on 'safe zone' So if numToSmash = 5, then the number can't start from 4 to 6
+	public int numToSmash = 1;
+	public int numRandomRange = 5; // how off random number can be
 
-	int max;
-	int min;
 	int currentNum;
 
 	float timer = 0f;
 
 	void Start() {
 
-		pointsManager = GameObject.Find("PointsManager").GetComponent<Points>();
-
-		int max = numToSmash + numRandomRange;
-		int min = numToSmash - numRandomRange;
+		pointsManager = GameObject.Find("PointsManager").GetComponent<PointsManager>();
 
 		// set starting number
-		do currentNum = Random.Range(min, max); //current number = starting number
-		while (currentNum >= numToSmash - numSafeRange && currentNum <= numToSmash + numSafeRange);
+		currentNum = Random.Range(numToSmash + 1, numToSmash + numRandomRange); //current number = starting number
 
 		number.text = currentNum.ToString();
 	}
@@ -70,8 +65,8 @@ public class Smashee : MonoBehaviour {
 	}
 
 	void HitSuccess() {
-		pointsManager.AddPoints(5);
-		PointsFloatingText("+" + numToSmash);
+		pointsManager.AddPoints(numToSmash);
+		PointsFloatingText("+" + numToSmash, pointsGainedColor);
 
 		Destroy(this.gameObject);
 	}
@@ -80,13 +75,14 @@ public class Smashee : MonoBehaviour {
 		int pointsLost = smasheeExpired ? numToSmash : Mathf.Abs(numToSmash - currentNum);
 
 		pointsManager.LosePoints(pointsLost);
-		PointsFloatingText("-" + pointsLost);
+		PointsFloatingText("-" + pointsLost, pointsLostColor);
 
 		Destroy(this.gameObject);
 	}
 
-	void PointsFloatingText(string text) {
+	void PointsFloatingText(string text, Color color) {
 		GameObject floatingText = (GameObject)Instantiate(floatingTextPrefab, transform.position, transform.localRotation);
 		floatingText.GetComponent<FloatingText>().textMesh.text = text;
+		floatingText.GetComponent<FloatingText>().textMesh.color = color;
 	}
 }

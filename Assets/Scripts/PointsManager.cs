@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class Points : MonoBehaviour {
+public class PointsManager : MonoBehaviour {
 
 	public Text pointsText;
 	int points = 0;
