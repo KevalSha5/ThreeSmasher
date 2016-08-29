@@ -45,6 +45,10 @@ public class Smashee : MonoBehaviour {
 
 	}
 
+	void OnMouseDown() { // checks if mouse pressed on collider
+		CheckHit();
+	}
+
 	void UpdateNumber() {
 
 		if (currentNum < numToSmash) currentNum++;
@@ -57,38 +61,32 @@ public class Smashee : MonoBehaviour {
 	}
 
 	void LosePointsOnFailure() {
-
-		if (currentNum == numToSmash) LosePoints(); // failed to press in time
-
-	}
-
-	void OnMouseDown() {
-		CheckHit();
+		if (currentNum == numToSmash) HitFailure(smasheeExpired: true); // failed to press in time
 	}
 
 	void CheckHit() {
+		if (currentNum == numToSmash) HitSuccess();
+		else HitFailure(smasheeExpired: false);
+	}
 
-		string pointsDiff = "";
-
-		if (currentNum == numToSmash) {
-			GetPoints ();
-			pointsDiff = "+" + numToSmash;
-		} else {
-			LosePoints();
-			pointsDiff = "-" + Mathf.Abs (numToSmash - currentNum);
-		}
-			
-		GameObject floatingText = (GameObject)Instantiate(floatingTextPrefab, transform.position, transform.localRotation);
-		floatingText.GetComponent<FloatingText>().textMesh.text = pointsDiff;
+	void HitSuccess() {
+		pointsManager.AddPoints(5);
+		PointsFloatingText("+" + numToSmash);
 
 		Destroy(this.gameObject);
 	}
 
-	void GetPoints() {
-		pointsManager.AddPoints(5);
+	void HitFailure(bool smasheeExpired) {
+		int pointsLost = smasheeExpired ? numToSmash : Mathf.Abs(numToSmash - currentNum);
+
+		pointsManager.LosePoints(pointsLost);
+		PointsFloatingText("-" + pointsLost);
+
+		Destroy(this.gameObject);
 	}
 
-	void LosePoints() {
-		pointsManager.LosePoints(Mathf.Abs(numToSmash - currentNum));
+	void PointsFloatingText(string text) {
+		GameObject floatingText = (GameObject)Instantiate(floatingTextPrefab, transform.position, transform.localRotation);
+		floatingText.GetComponent<FloatingText>().textMesh.text = text;
 	}
 }
