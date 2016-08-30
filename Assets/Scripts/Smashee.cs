@@ -6,9 +6,10 @@ public class Smashee : MonoBehaviour {
 	PointsManager pointsManager;
 
 	public TextMesh number;
-	public Color smashColor;
-	public Color pointsLostColor;
-	public Color pointsGainedColor;
+	public Color defaultColor; // default number color
+	public Color smashColor; // number color when it should be smashed
+	public Color pointsLostColor; // floating text
+	public Color pointsGainedColor; // floating text color
 	public GameObject floatingTextPrefab;
 
 	public int numToSmash = 1;
@@ -58,14 +59,15 @@ public class Smashee : MonoBehaviour {
 		else currentNum--;
 
 		if (currentNum == numToSmash) number.color = smashColor; // if number is numToSmash, color it red
+		else number.color = defaultColor;
 
 		number.text = currentNum.ToString(); //update textmesh to new number
 
 	}
 
-	//void LosePointsOnFailure() {
-	//	if (currentNum == numToSmash) HitFailure(smasheeExpired: true); // failed to press in time
-	//}
+	void LosePointsOnFailure() {
+		if (currentNum == numToSmash) HitFailure(smasheeExpired: true); // failed to press in time
+	}
 
 	void CheckHit() {
 		if (currentNum == numToSmash) HitSuccess();
@@ -89,7 +91,7 @@ public class Smashee : MonoBehaviour {
 	}
 
 	void PointsFloatingText(string text, Color color) {
-		GameObject floatingText = (GameObject)Instantiate(floatingTextPrefab, transform.position, transform.localRotation);
+		GameObject floatingText = (GameObject)Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
 		floatingText.GetComponent<FloatingText>().textMesh.text = text;
 		floatingText.GetComponent<FloatingText>().textMesh.color = color;
 	}
