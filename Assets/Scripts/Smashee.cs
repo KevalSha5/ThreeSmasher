@@ -15,7 +15,8 @@ public class Smashee : MonoBehaviour {
 	public int numRandomRange = 5; // how off random number can be
 
 	int currentNum;
-
+	int startNum;
+	Color startColor;
 	float timer = 0f;
 
 	void Start() {
@@ -24,8 +25,9 @@ public class Smashee : MonoBehaviour {
 
 		// set starting number
 		currentNum = Random.Range(numToSmash + 1, numToSmash + numRandomRange); //current number = starting number
-
+		startNum = currentNum;
 		number.text = currentNum.ToString();
+		startColor = number.color;
 	}
 	
 	void Update () {
@@ -33,7 +35,7 @@ public class Smashee : MonoBehaviour {
 		timer += Time.deltaTime;
 
 		if (timer >= 1) {
-			LosePointsOnFailure();
+			//LosePointsOnFailure();
 			UpdateNumber();
 			timer = 0;
 		}
@@ -45,8 +47,12 @@ public class Smashee : MonoBehaviour {
 	}
 
 	void UpdateNumber() {
-
-		if (currentNum < numToSmash) currentNum++;
+		if (currentNum < numToSmash)
+		{
+			number.color = startColor;
+			currentNum = startNum + 3;
+			startNum = currentNum;
+		} 
 		else currentNum--;
 
 		if (currentNum == numToSmash) number.color = smashColor; // if number is numToSmash, color it red
@@ -55,9 +61,9 @@ public class Smashee : MonoBehaviour {
 
 	}
 
-	void LosePointsOnFailure() {
-		if (currentNum == numToSmash) HitFailure(smasheeExpired: true); // failed to press in time
-	}
+	//void LosePointsOnFailure() {
+	//	if (currentNum == numToSmash) HitFailure(smasheeExpired: true); // failed to press in time
+	//}
 
 	void CheckHit() {
 		if (currentNum == numToSmash) HitSuccess();
