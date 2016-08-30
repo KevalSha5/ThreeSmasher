@@ -16,6 +16,7 @@ public class Smashee : MonoBehaviour {
 
 	int currentNum;
 	int startNum;
+	int restarted = 0;
 	Color startColor;
 	float timer = 0f;
 
@@ -32,7 +33,7 @@ public class Smashee : MonoBehaviour {
 	
 	void Update () {
 
-		timer += Time.deltaTime;
+		timer += (Time.deltaTime + Time.deltaTime*(0.5f*restarted)); // increases countdown interval evertime currentNum reaches 0
 
 		if (timer >= 1) {
 			//LosePointsOnFailure();
@@ -49,8 +50,9 @@ public class Smashee : MonoBehaviour {
 	void UpdateNumber() {
 		if (currentNum < numToSmash)
 		{
+			restarted++;
 			number.color = startColor;
-			currentNum = startNum + 3;
+			currentNum = startNum + 3; // if number gets to zero, countdown starts with a higher value
 			startNum = currentNum;
 		} 
 		else currentNum--;
