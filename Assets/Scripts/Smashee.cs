@@ -38,6 +38,7 @@ public class Smashee : MonoBehaviour {
 
 		if (timer >= 1) {
 			//LosePointsOnFailure();
+			KeepNumberPointedUp();
 			UpdateNumber();
 			timer = 0;
 		}
@@ -46,6 +47,10 @@ public class Smashee : MonoBehaviour {
 
 	void OnMouseDown() { // checks if mouse pressed on collider
 		CheckHit();
+	}
+
+	void KeepNumberPointedUp() {
+		number.transform.rotation = Quaternion.identity;
 	}
 
 	void UpdateNumber() {
