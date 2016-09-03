@@ -6,7 +6,6 @@ public class Smashee : MonoBehaviour {
 	PointsManager pointsManager;
 
 	public TextMesh number;
-	public Color defaultColor; // default number color
 	public Color smashColor; // number color when it should be smashed
 	public Color pointsLostColor; // floating text
 	public Color pointsGainedColor; // floating text color
@@ -64,7 +63,7 @@ public class Smashee : MonoBehaviour {
 		else currentNum--;
 
 		if (currentNum == numToSmash) number.color = smashColor; // if number is numToSmash, color it red
-		else number.color = defaultColor;
+		else number.color = startColor;
 
 		number.text = currentNum.ToString(); //update textmesh to new number
 
