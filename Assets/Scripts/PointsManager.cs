@@ -11,7 +11,7 @@ public class PointsManager : MonoBehaviour {
 	
 	}
 
-	public void AddPoints(int points) {
+	public void GainPoints(int points) {
 		this.points += points;
 		UpdateText();
 	}

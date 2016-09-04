@@ -4,6 +4,7 @@ using System.Collections;
 public class SmasheeGenerator : MonoBehaviour {
 
 	public float instantiationSpeed;
+	float instantiationSpeedAccrued;
 	public GameObject smashee;
 	public int numSmasheeInRow = 5;
 	public int numSmasheeInColumn;
@@ -21,7 +22,6 @@ public class SmasheeGenerator : MonoBehaviour {
 		float smasheeWidth = smashee.GetComponentInChildren<SpriteRenderer>().bounds.extents.x * 2f;
 		for (int i = 0; i < numSmasheeInRow; i++) {
 			instantiationXPoints [i] = -horizontalExtent + i * smasheeWidth + smasheeWidth / 2f;
-//			Debug.Log(instantiationXPoints[i]);
 		}
 		
 	}	
