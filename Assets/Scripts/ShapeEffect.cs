@@ -8,12 +8,11 @@ public class ShapeEffect : MonoBehaviour {
 	public PointsManager pointsManager;
 	public GameObject floatingTextPrefab;
 
+	public Color pointsLostColor; // floating text
+	public Color pointsGainedColor; // floating text color
+
 	void Start () {
 		pointsManager = GameObject.Find("PointsManager").GetComponent<PointsManager>();
-	}
-	
-	void Update () {
-	
 	}
 
 	public void ExecuteUnityEvent() {
@@ -22,22 +21,19 @@ public class ShapeEffect : MonoBehaviour {
 
 	public void LosePoints(int points) {
 		pointsManager.LosePoints(points);
-		PointsFloatingText("-" + points, Color.red);
+		PointsFloatingText("-" + points, pointsLostColor);
 		DestorySmashee();
 	}
 
 	public void GainPoints(int points) {
 		pointsManager.GainPoints(points);
-		PointsFloatingText("+" + points, Color.blue);
+		PointsFloatingText("+" + points, pointsGainedColor);
 		DestorySmashee();
 	}
 
-	public void BombEffect() {
-
-	}
-
-	void DestorySmashee() {
+	public void DestorySmashee() {
 		Destroy(transform.parent.gameObject);
+		GetComponentInParent<Smashee>().RemoveFromColumnsList();
 	}
 
 	void PointsFloatingText(string text, Color color) {

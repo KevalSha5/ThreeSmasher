@@ -13,15 +13,15 @@ public class PointsManager : MonoBehaviour {
 
 	public void GainPoints(int points) {
 		this.points += points;
-		UpdateText();
+		UpdateUI();
 	}
 
 	public void LosePoints(int points) {
 		this.points -= points;
-		UpdateText();
+		UpdateUI();
 	}
 
-	void UpdateText() {
+	void UpdateUI() {
 		pointsText.text = points.ToString();
 	}
 	

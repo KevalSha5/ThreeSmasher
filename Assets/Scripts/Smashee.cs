@@ -1,14 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Smashee : MonoBehaviour {
 
 	PointsManager pointsManager;
-
-	Color startColor;
-	public Color smashColor; // number color when it should be smashed
-	public Color pointsLostColor; // floating text
-	public Color pointsGainedColor; // floating text color
 
 	public ShapeEffect[] shapes;
 	int currentShapeCounter = 0;
@@ -17,14 +13,21 @@ public class Smashee : MonoBehaviour {
 	public float shapeChangeSpeed = 1f;
 	float timer = 0f;
 
+	Rigidbody2D rb;
+	public bool isSettled = false;
+
+	List<Smashee> smasheeColumn; //the list of smashees for column the smashee is in
+
 	void Start() {
 
 		pointsManager = GameObject.Find("PointsManager").GetComponent<PointsManager>();
 
+		rb = GetComponent<Rigidbody2D>();
+
 		shapes = GetComponentsInChildren<ShapeEffect>();
 		foreach (ShapeEffect effect in shapes)
-			effect.gameObject.SetActive (false);
-		
+			effect.gameObject.SetActive(false);
+
 		SetRandomShapeCounter();
 		ActivateNextShape();
 
@@ -41,13 +44,17 @@ public class Smashee : MonoBehaviour {
 			timer = 0;
 		}
 
+		if (rb.IsSleeping ()) {
+			isSettled = true;
+		}
+
 	}
 
 	void SetRandomShapeCounter() {
 		nextShapeCounter = Random.Range(0, shapes.Length);
 	}
 
-	void UpdateShapeCounter() {
+	void CycleShapeCounter() {
 		nextShapeCounter = (currentShapeCounter + 1) % shapes.Length;
 	}
 
@@ -59,6 +66,14 @@ public class Smashee : MonoBehaviour {
 
 	void OnMouseDown() { // checks if mouse pressed on collider
 		shapes[currentShapeCounter].ExecuteUnityEvent();
+	}
+
+	public void SetColumnList(List<Smashee> list) {
+		this.smasheeColumn = list;
+	}
+
+	public void RemoveFromColumnsList() {
+		smasheeColumn.Remove(this);
 	}
 
 }

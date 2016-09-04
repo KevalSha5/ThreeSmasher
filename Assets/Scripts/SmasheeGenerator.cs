@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SmasheeGenerator : MonoBehaviour {
 
-	public float instantiationSpeed;
+	public float instantiationDelay;
 	float instantiationSpeedAccrued;
 	public GameObject smashee;
 	public int numSmasheeInRow = 5;
 	public int numSmasheeInColumn;
 
+	List<Smashee>[] smasheeColumnsList; // to keep track of smashees in the column
 	float[] instantiationXPoints;
 	float horizontalExtent; //orthographic width of screen
 
@@ -21,9 +23,14 @@ public class SmasheeGenerator : MonoBehaviour {
 
 		float smasheeWidth = smashee.GetComponentInChildren<SpriteRenderer>().bounds.extents.x * 2f;
 		for (int i = 0; i < numSmasheeInRow; i++) {
-			instantiationXPoints [i] = -horizontalExtent + i * smasheeWidth + smasheeWidth / 2f;
+			instantiationXPoints[i] = -horizontalExtent + i * smasheeWidth + smasheeWidth / 2f;
 		}
-		
+
+		smasheeColumnsList = new List<Smashee>[numSmasheeInRow];
+		for (int i = 0; i < numSmasheeInRow; i++)
+			smasheeColumnsList[i] = new List<Smashee>();
+
+		GameObject.Find("GameoverManager").GetComponent<GameoverManager>().SetSmasheeColumnsList(smasheeColumnsList);
 	}	
 	
 	void Update () {
@@ -32,17 +39,19 @@ public class SmasheeGenerator : MonoBehaviour {
 
 		if (timer <= 0) {
 
-			float x = instantiationXPoints[Random.Range (0, instantiationXPoints.Length)];
-			float y = Camera.main.pixelHeight * .8f; // 80% height
+			int column = Random.Range(0, instantiationXPoints.Length);
+			float x = instantiationXPoints[column];
+			float y = Camera.main.orthographicSize * .6f; // 80% height?? (orthographicSize is half of screen)
 
 			Vector3 pos = new Vector3(x, y, 0);
-			pos = Camera.main.ScreenToWorldPoint(pos); // TODO: fix this
-			pos.z = 0f;
-			pos.x = x;
+			GameObject newSmashee = (GameObject)Instantiate(smashee, pos, Quaternion.identity);
+			Smashee newSmasheeScript = newSmashee.GetComponent<Smashee>();
 
-			Instantiate(smashee, pos, Quaternion.identity);
+			// add a reference to the smasheeScript to the columns list
+			newSmasheeScript.SetColumnList(smasheeColumnsList[column]);
+			smasheeColumnsList[column].Add(newSmasheeScript);
 
-			timer = instantiationSpeed;
+			timer = instantiationDelay;
 		}
 		
 	}

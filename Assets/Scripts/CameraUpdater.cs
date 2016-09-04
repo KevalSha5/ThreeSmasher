@@ -4,7 +4,6 @@ using System.Collections;
 [ExecuteInEditMode]
 public class CameraUpdater : MonoBehaviour {
 
-	public GameObject backdrop;
 	public SpriteRenderer smasheeShape; 
 	public SmasheeGenerator smasheeGenerator;
 	int gridWidth; //number of smashee horizontally
@@ -23,6 +22,7 @@ public class CameraUpdater : MonoBehaviour {
 
 		float requiredHorizontalExtent = (smasheeWidth * gridWidth) / 2f;
 		float requiredVeritcalExtent = requiredHorizontalExtent * Screen.height / Screen.width;
+
 		Camera.main.orthographicSize = requiredVeritcalExtent;
 
 	}
