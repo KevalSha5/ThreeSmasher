@@ -5,11 +5,12 @@ using System.Collections;
 public class ShapeEffect : MonoBehaviour {
 
 	public UnityEvent unityEvent;
-	public PointsManager pointsManager;
 	public GameObject floatingTextPrefab;
 
 	public Color pointsLostColor; // floating text
 	public Color pointsGainedColor; // floating text color
+
+	PointsManager pointsManager;
 
 	void Start () {
 		pointsManager = GameObject.Find("PointsManager").GetComponent<PointsManager>();
