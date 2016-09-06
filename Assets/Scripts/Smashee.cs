@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class Smashee : MonoBehaviour {
 
-	PointsManager pointsManager;
-
 	public ShapeEffect[] shapes;
 	int currentShapeCounter = 0;
 	int nextShapeCounter = 0;
@@ -19,8 +17,6 @@ public class Smashee : MonoBehaviour {
 	List<Smashee> smasheeColumn; //the list of smashees for column the smashee is in
 
 	void Start() {
-
-		pointsManager = GameObject.Find("PointsManager").GetComponent<PointsManager>();
 
 		rb = GetComponent<Rigidbody2D>();
 
@@ -38,7 +34,7 @@ public class Smashee : MonoBehaviour {
 		timer += Time.deltaTime; // increases countdown interval evertime currentNum reaches 0
 
 		if (timer >= shapeChangeSpeed) {
-			//UpdateShapeCounter();
+			//CycleShapeCounter();
 			SetRandomShapeCounter();
 			ActivateNextShape();
 			timer = 0;

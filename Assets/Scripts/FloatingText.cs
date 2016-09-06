@@ -3,11 +3,11 @@ using System.Collections;
 
 public class FloatingText : MonoBehaviour {
 
+	Color textColor;
 	public TextMesh textMesh;
 	public float fadeSpeed;
 	public float floatSpeed;
 
-	Color textColor;
 
 	void Update () {
 	

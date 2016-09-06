@@ -7,16 +7,10 @@ public class CameraUpdater : MonoBehaviour {
 	public SpriteRenderer smasheeShape; 
 	public SmasheeGenerator smasheeGenerator;
 	int gridWidth; //number of smashee horizontally
-	int gridHeight; //number of smashee vertically
 
-	void Start () {
-		
-	}
-	
 	void Update () {
 
 		gridWidth = smasheeGenerator.numSmasheeInRow;
-		gridHeight = smasheeGenerator.numSmasheeInColumn;
 
 		float smasheeWidth = smasheeShape.bounds.extents.x * 2;
 

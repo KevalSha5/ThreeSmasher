@@ -10,24 +10,18 @@ public class ShapeEffect : MonoBehaviour {
 	public Color pointsLostColor; // floating text
 	public Color pointsGainedColor; // floating text color
 
-	PointsManager pointsManager;
-
-	void Start () {
-		pointsManager = GameObject.Find("PointsManager").GetComponent<PointsManager>();
-	}
-
 	public void ExecuteUnityEvent() {
 		unityEvent.Invoke();
 	}
 
 	public void LosePoints(int points) {
-		pointsManager.LosePoints(points);
+		PointsManager.Points.Lose(points);
 		PointsFloatingText("-" + points, pointsLostColor);
 		DestorySmashee();
 	}
 
 	public void GainPoints(int points) {
-		pointsManager.GainPoints(points);
+		PointsManager.Points.Gain(points);
 		PointsFloatingText("+" + points, pointsGainedColor);
 		DestorySmashee();
 	}

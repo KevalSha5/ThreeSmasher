@@ -4,19 +4,25 @@ using System.Collections;
 
 public class PointsManager : MonoBehaviour {
 
+	public static PointsManager Points;
 	public Text pointsText;
 	int points = 0;
 
-	void Start () {
+	void Awake () {
 	
+		if (Points != null)	Points = new PointsManager ();
+		else Points = this;
+
+		DontDestroyOnLoad(this);
+
 	}
 
-	public void GainPoints(int points) {
+	public void Gain(int points) {
 		this.points += points;
 		UpdateUI();
 	}
 
-	public void LosePoints(int points) {
+	public void Lose(int points) {
 		this.points -= points;
 		UpdateUI();
 	}

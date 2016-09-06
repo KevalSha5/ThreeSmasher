@@ -4,18 +4,29 @@ using System.Collections.Generic;
 
 public class GameoverManager : MonoBehaviour {
 
-	List<Smashee>[] smasheeColumnsList;
+	public static GameoverManager Manager;
+	public List<Smashee>[] smasheeListArray;
 
-	public void SetSmasheeColumnsList (List<Smashee>[] listArray) {
-		smasheeColumnsList = listArray;
+	void Start() {
+//
+//		this.smasheeListArray = SmasheeGenerator.SG.smasheeListArray;
+
+	}
+
+	void Awake() {
+		
+		if (Manager != null) Manager = new GameoverManager();
+		else Manager = this;
+
+		DontDestroyOnLoad(this);
 	}
 	
 	void Update () {
 
 		int asleepCount = 0;
 
-		for (int i = 0; i < smasheeColumnsList.Length; i++) {
-			foreach (Smashee smashee in smasheeColumnsList[i])
+		for (int i = 0; i < smasheeListArray.Length; i++) {
+			foreach (Smashee smashee in smasheeListArray[i])
 				if (smashee.isSettled) asleepCount++;
 
 			if (asleepCount >= 6) Debug.Log("GameOver");
