@@ -4,6 +4,7 @@ using System.Collections;
 
 public class PointsManager : MonoBehaviour {
 
+	//Singleton
 	public static PointsManager Points;
 	public Text pointsText;
 	int points = 0;
@@ -14,7 +15,6 @@ public class PointsManager : MonoBehaviour {
 		else Points = this;
 
 		DontDestroyOnLoad(this);
-
 	}
 
 	public void Gain(int points) {

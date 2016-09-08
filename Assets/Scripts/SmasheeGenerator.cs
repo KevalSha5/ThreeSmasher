@@ -7,21 +7,30 @@ public class SmasheeGenerator : MonoBehaviour {
 	public static SmasheeGenerator SG;
 
 	public float instantiationDelay;
+	public float staticSmasheeProbability;
 	public GameObject smashee;
 	public int numSmasheeInRow = 5;
 
-	public List<Smashee>[] smasheeListArray; // to keep track of smashees in the column
+	public int[] numSmasheeInColumn;
+
 	float[] instantiationXPoints;
 	float horizontalExtent; //orthographic width of screen
 
+	public bool generate = true;
 	float timer = 1f; // also acts as delay for when to start generating
 
+	System.Action<int> smasheeOnDestroyCallback;
+	System.Action<int> smasheeOnSettleCallback;
+
 	void Awake() {
+
+		numSmasheeInColumn = new int[numSmasheeInRow];
 
 		if (SG != null) SG = new SmasheeGenerator();
 		else SG = this;
 
 		DontDestroyOnLoad(this);
+
 	}
 
 	void Start () {
@@ -35,34 +44,34 @@ public class SmasheeGenerator : MonoBehaviour {
 			instantiationXPoints[i] = -horizontalExtent + i * smasheeWidth + smasheeWidth / 2f;
 		}
 
-		// instantiate the lists in the array
-		smasheeListArray = new List<Smashee>[numSmasheeInRow];
-		for (int i = 0; i < numSmasheeInRow; i++)
-			smasheeListArray[i] = new List<Smashee>();
-		GameoverManager.Manager.smasheeListArray = this.smasheeListArray;
+		smasheeOnSettleCallback = (column) => {numSmasheeInColumn[column]++;};
+		smasheeOnDestroyCallback = (column) => {numSmasheeInColumn[column]--;};
 
 	}	
-	
+
 	void Update () {
 
 		timer -= Time.deltaTime;
 
-		if (timer <= 0) {
+		if (timer <= 0 && generate) {
 
 			int column = Random.Range(0, instantiationXPoints.Length);
 			float x = instantiationXPoints[column];
 			float y = Camera.main.orthographicSize * .6f; // 80% height?? (orthographicSize is half of screen)
 
 			Vector3 pos = new Vector3(x, y, 0);
-			GameObject newSmashee = (GameObject)Instantiate(smashee, pos, Quaternion.identity);
-			Smashee newSmasheeScript = newSmashee.GetComponent<Smashee>();
+			GameObject newSmasheeObj = (GameObject)Instantiate(smashee, pos, Quaternion.identity);
+			Smashee newSmasheeScript = newSmasheeObj.GetComponent<Smashee>();
 
-			// add a reference to the smasheeScript to the columns list
-			newSmasheeScript.SetColumnList(smasheeListArray[column]);
-			smasheeListArray[column].Add(newSmasheeScript);
+			newSmasheeScript.SetColumn(column);
+			newSmasheeScript.SetOnSettleCallback(smasheeOnSettleCallback);
+			newSmasheeScript.SetOnDestoryCallback(smasheeOnDestroyCallback);
+
+			if (Random.value <= staticSmasheeProbability) newSmasheeScript.isStatic = true;
 
 			timer = instantiationDelay;
 		}
 		
 	}
+
 }

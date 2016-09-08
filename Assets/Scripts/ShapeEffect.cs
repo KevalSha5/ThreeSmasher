@@ -28,7 +28,6 @@ public class ShapeEffect : MonoBehaviour {
 
 	public void DestorySmashee() {
 		Destroy(transform.parent.gameObject);
-		GetComponentInParent<Smashee>().RemoveFromColumnsList();
 	}
 
 	void PointsFloatingText(string text, Color color) {

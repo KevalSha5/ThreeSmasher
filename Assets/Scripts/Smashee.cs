@@ -8,11 +8,21 @@ public class Smashee : MonoBehaviour {
 	int currentShapeCounter = 0;
 	int nextShapeCounter = 0;
 
+	public SpriteRenderer square;
+	public Color staticSquareColor;
+	public Color nonstaticSquareColor;
+
 	public float shapeChangeSpeed = 1f;
 	float timer = 0f;
 
 	Rigidbody2D rb;
 	public bool isSettled = false;
+
+	System.Action<int> onDestoryCallback; //callback used to decrement an array that keeps track of number of smashees
+	System.Action<int> onSettleCallback; //callback used to decrement an array that keeps track of number of smashees
+	int column;
+
+	public bool isStatic;
 
 	List<Smashee> smasheeColumn; //the list of smashees for column the smashee is in
 
@@ -24,6 +34,9 @@ public class Smashee : MonoBehaviour {
 		foreach (ShapeEffect effect in shapes)
 			effect.gameObject.SetActive(false);
 
+		if (isStatic) square.color = staticSquareColor;
+		else square.color = nonstaticSquareColor;
+
 		SetRandomShapeCounter();
 		ActivateNextShape();
 
@@ -33,15 +46,16 @@ public class Smashee : MonoBehaviour {
 
 		timer += Time.deltaTime; // increases countdown interval evertime currentNum reaches 0
 
-		if (timer >= shapeChangeSpeed) {
+		if (timer >= shapeChangeSpeed && !isStatic) {
 			//CycleShapeCounter();
 			SetRandomShapeCounter();
 			ActivateNextShape();
 			timer = 0;
 		}
 
-		if (rb.IsSleeping ()) {
+		if (rb.IsSleeping() && !isSettled) {
 			isSettled = true;
+			onSettleCallback(column);
 		}
 
 	}
@@ -64,12 +78,20 @@ public class Smashee : MonoBehaviour {
 		shapes[currentShapeCounter].ExecuteUnityEvent();
 	}
 
-	public void SetColumnList(List<Smashee> list) {
-		this.smasheeColumn = list;
+	public void SetOnDestoryCallback(System.Action<int> callback) {
+		onDestoryCallback = callback;
 	}
 
-	public void RemoveFromColumnsList() {
-		smasheeColumn.Remove(this);
+	public void SetOnSettleCallback(System.Action<int> callback) {
+		onSettleCallback = callback;
+	}
+
+	public void SetColumn(int column) {
+		this.column = column;
+	}
+
+	void OnDestroy() {
+		onDestoryCallback(column);
 	}
 
 }

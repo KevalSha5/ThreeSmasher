@@ -11,12 +11,12 @@ public class FloorPositioner : MonoBehaviour {
 
 		Vector2 size = Vector2.zero;
 		size.x = Camera.main.orthographicSize * 2f * Screen.width / Screen.height;
-		size.y = 1;
+		size.y = 5;
 		bc.size = size;
 
-		Vector2 offset = Vector2.zero;
-		offset.y = -(Camera.main.orthographicSize + bc.size.y/2f);
-		bc.offset = offset;
+		Vector2 newPos = transform.position;
+		newPos.y = -(Camera.main.orthographicSize + bc.size.y/2f);
+		transform.position = newPos;
 
 	}
 
