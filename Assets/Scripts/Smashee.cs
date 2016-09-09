@@ -23,11 +23,15 @@ public class Smashee : MonoBehaviour {
 	public int column;
 	public int row;
 
+	bool currentlySleeping;
+	bool previouslySleeping;
+
 	public bool isStaticShape;
+	public bool debugging = false;
 
 	void Start() {
 
-		rb = GetComponent<Rigidbody2D>();
+		//rb = GetComponent<Rigidbody2D>();
 		sf = GetComponent<SmasheeFall>();
 
 		shapes = GetComponentsInChildren<ShapeEffect>();
@@ -50,14 +54,44 @@ public class Smashee : MonoBehaviour {
 			timer = 0;
 		}
 
-			
-		if (sf.isSettled) {
-			CalculateRow();
-			SG.AddToGrid(this);
-		} else if (sf.previouslySettled) {
-			SG.RemoveFromGrid(this);	
-		}
+//		previouslySleeping = currentlySleeping;
+//		currentlySleeping = rb.IsSleeping();
 
+//		if (currentlySleeping && !previouslySleeping) {
+//
+//			CalculateRow();
+//			SG.AddToGrid(this);
+//			Rules.RulePatterns.dirty = true;
+//			ChangeOpacity(.5f);
+//
+//		} else if (!currentlySleeping) {
+//
+//			SG.RemoveFromGrid(this);	
+//			ChangeOpacity(1);
+//
+//		}
+
+		if (sf.currentState != sf.lastState) { //only if state changed
+
+			if (sf.currentState == SmasheeFall.State.Settled) {
+				CalculateRow();
+				SG.AddToGrid(this);
+				ChangeOpacity(.5f);
+				Rules.RulePatterns.dirty = true;
+			} else {
+				SG.RemoveFromGrid(this);	
+				sf.velocity = 3.24f;
+				ChangeOpacity(1);
+			}
+
+		}	
+
+	}
+
+	void ChangeOpacity(float opacity) {
+		Color color = square.color;
+		color.a = opacity;
+		square.color = color;
 	}
 
 	void SetRandomShape() {
@@ -80,6 +114,7 @@ public class Smashee : MonoBehaviour {
 		// shapes[currentShapeCounter].ExecuteUnityEvent();
 		if (isStaticShape) return;
 		CycleShape();
+		Rules.RulePatterns.dirty = true;
 	}
 
 	void CalculateRow() {

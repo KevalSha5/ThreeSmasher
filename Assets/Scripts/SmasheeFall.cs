@@ -3,26 +3,28 @@ using System.Collections;
 
 public class SmasheeFall : MonoBehaviour {
 
-	public float speed;
 
-	public bool isSettled;
-	public bool previouslySettled;
+	public enum State {Falling, Settled};
+
+	public State currentState;
+	public State lastState;
+
+	public float gravity;
+	public float velocity;
+
 
 	Rigidbody2D rb;
 	BoxCollider2D bc;
 
 	void Start () {
-		isSettled = false;
-		previouslySettled = false;
-
 		rb = GetComponent<Rigidbody2D>();
 		bc = GetComponent<BoxCollider2D>();
 	}
 	
 	void Update () {
-	
-		Vector3 displacement = Vector3.down * Time.deltaTime * speed;
-		// Debug.Log(displacement);
+
+		velocity = velocity * gravity;
+		Vector3 displacement = Vector3.down * Time.deltaTime * velocity;
 
 		float horizontalTolerance = .9f;
 		float extentX = bc.bounds.extents.x * horizontalTolerance;
@@ -52,11 +54,15 @@ public class SmasheeFall : MonoBehaviour {
 			newPos.y = adjustedYPos;
 			transform.position = newPos;
 
-			isSettled = true;
-			previouslySettled = true;
+			velocity = 0;
+			lastState = currentState;
+			currentState = State.Settled;
 		} else {
+			
 			transform.position += displacement;
-			isSettled = false;
+			lastState = currentState;
+			currentState = State.Falling;
 		}
 	}
+
 }

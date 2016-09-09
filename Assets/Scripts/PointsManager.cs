@@ -27,7 +27,7 @@ public class PointsManager : MonoBehaviour {
 		UpdateUI();
 	}
 
-	void UpdateUI() {
+	void UpdateUI() {		
 		pointsText.text = points.ToString();
 	}
 	
