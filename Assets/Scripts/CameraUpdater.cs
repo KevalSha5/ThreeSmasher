@@ -10,7 +10,7 @@ public class CameraUpdater : MonoBehaviour {
 
 	void Update () {
 
-		gridWidth = smasheeGenerator.numSmasheeInRow;
+		gridWidth = smasheeGenerator.maxRows;
 
 		float smasheeWidth = smasheeShape.bounds.extents.x * 2;
 

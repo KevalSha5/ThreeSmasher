@@ -5,16 +5,20 @@ using System.Collections.Generic;
 public class GameoverManager : MonoBehaviour {
 
 	public static GameoverManager Manager;
-	int[] numSmasheeInColumn;
+	SmasheeGenerator SG;
+	Smashee[,] grid;
+	int columnCount;
 
 	void Start() {
 
-		numSmasheeInColumn = SmasheeGenerator.SG.numSmasheeInColumn;
+		SG = SmasheeGenerator.SG;
+		grid = SG.settledSmasheeGrid;
 
 	}
 
 	void Awake() {
-		
+
+
 		if (Manager != null) Manager = new GameoverManager();
 		else Manager = this;
 
@@ -23,9 +27,15 @@ public class GameoverManager : MonoBehaviour {
 	
 	void Update () {
 
-		for (int i = 0; i < numSmasheeInColumn.Length; i++) {
-			
-			if (numSmasheeInColumn[i] >= 8) SmasheeGenerator.SG.generate = false;
+
+		for (int x = 0; x < grid.GetLength(0); x++) {
+			for (int y = 0; y < grid.GetLength(1); y++) {
+				if (grid[x, y] != null) columnCount++;
+			}
+
+			if (columnCount >= SG.maxColumns) SG.generate = false;
+
+			columnCount = 0;
 
 		}
 	

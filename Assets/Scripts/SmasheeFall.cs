@@ -4,10 +4,17 @@ using System.Collections;
 public class SmasheeFall : MonoBehaviour {
 
 	public float speed;
+
+	public bool isSettled;
+	public bool previouslySettled;
+
 	Rigidbody2D rb;
 	BoxCollider2D bc;
 
 	void Start () {
+		isSettled = false;
+		previouslySettled = false;
+
 		rb = GetComponent<Rigidbody2D>();
 		bc = GetComponent<BoxCollider2D>();
 	}
@@ -41,12 +48,15 @@ public class SmasheeFall : MonoBehaviour {
 			float otherColliderExtentY = otherCollider.bounds.extents.y;
 
 			float adjustedYPos = otherColliderCenter.y + otherColliderExtentY + extentY;
-
 			Vector3 newPos = transform.position;
 			newPos.y = adjustedYPos;
 			transform.position = newPos;
+
+			isSettled = true;
+			previouslySettled = true;
 		} else {
 			transform.position += displacement;
+			isSettled = false;
 		}
 	}
 }

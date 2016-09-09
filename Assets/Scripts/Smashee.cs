@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Smashee : MonoBehaviour {
 
 	public ShapeEffect[] shapes;
-	int currentShapeCounter = 0;
+	public int currentShapeCounter = 0;
 	int nextShapeCounter = 0;
 
 	public SpriteRenderer square;
@@ -16,56 +16,58 @@ public class Smashee : MonoBehaviour {
 	float timer = 0f;
 
 	Rigidbody2D rb;
-	public bool isSettled = false;
+	SmasheeFall sf;
 
-	System.Action<int> onDestoryCallback; //callback used to decrement an array that keeps track of number of smashees
-	System.Action<int> onSettleCallback; //callback used to decrement an array that keeps track of number of smashees
-	int column;
+	SmasheeGenerator SG = SmasheeGenerator.SG;
 
-	public bool isStatic;
+	public int column;
+	public int row;
 
-	List<Smashee> smasheeColumn; //the list of smashees for column the smashee is in
+	public bool isStaticShape;
 
 	void Start() {
 
 		rb = GetComponent<Rigidbody2D>();
+		sf = GetComponent<SmasheeFall>();
 
 		shapes = GetComponentsInChildren<ShapeEffect>();
 		foreach (ShapeEffect effect in shapes)
 			effect.gameObject.SetActive(false);
 
-		if (isStatic) square.color = staticSquareColor;
+		if (isStaticShape) square.color = staticSquareColor;
 		else square.color = nonstaticSquareColor;
 
-		SetRandomShapeCounter();
-		ActivateNextShape();
-
+		SetRandomShape();
 	}
 	
 	void Update () {
 
 		timer += Time.deltaTime; // increases countdown interval evertime currentNum reaches 0
 
-		if (timer >= shapeChangeSpeed && !isStatic) {
-			//CycleShapeCounter();
-			SetRandomShapeCounter();
-			ActivateNextShape();
+		if (timer >= shapeChangeSpeed && !isStaticShape) {
+			// CycleShapeCounter();
+			// SetRandomShapeCounter();
 			timer = 0;
 		}
 
-		if (rb.IsSleeping() && !isSettled) {
-			isSettled = true;
-			onSettleCallback(column);
+			
+		if (sf.isSettled) {
+			CalculateRow();
+			SG.AddToGrid(this);
+		} else if (sf.previouslySettled) {
+			SG.RemoveFromGrid(this);	
 		}
 
 	}
 
-	void SetRandomShapeCounter() {
+	void SetRandomShape() {
 		nextShapeCounter = Random.Range(0, shapes.Length);
+		ActivateNextShape();
 	}
 
-	void CycleShapeCounter() {
+	void CycleShape() {
 		nextShapeCounter = (currentShapeCounter + 1) % shapes.Length;
+		ActivateNextShape();
 	}
 
 	void ActivateNextShape() {
@@ -75,23 +77,28 @@ public class Smashee : MonoBehaviour {
 	}
 
 	void OnMouseDown() { // checks if mouse pressed on collider
-		shapes[currentShapeCounter].ExecuteUnityEvent();
+		// shapes[currentShapeCounter].ExecuteUnityEvent();
+		if (isStaticShape) return;
+		CycleShape();
 	}
 
-	public void SetOnDestoryCallback(System.Action<int> callback) {
-		onDestoryCallback = callback;
+	void CalculateRow() {
+		Vector2 start = transform.position;
+
+		Vector2 end = transform.position;
+		end.y = -Camera.main.orthographicSize; // bottom of screen
+
+		RaycastHit2D[] hits = Physics2D.LinecastAll(start, end, LayerMask.GetMask("Smashee"));
+
+		row = hits.Length - 1; //the raycast will also hit this smashee, so decrement by 1
 	}
 
-	public void SetOnSettleCallback(System.Action<int> callback) {
-		onSettleCallback = callback;
-	}
-
-	public void SetColumn(int column) {
-		this.column = column;
+	public bool HasSameShape(Smashee smashee) {
+		return this.currentShapeCounter == smashee.currentShapeCounter;
 	}
 
 	void OnDestroy() {
-		onDestoryCallback(column);
+		SG.RemoveFromGrid(this);
 	}
 
 }
