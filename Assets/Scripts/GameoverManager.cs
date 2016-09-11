@@ -10,15 +10,11 @@ public class GameoverManager : MonoBehaviour {
 	int columnCount;
 
 	void Start() {
-
 		SG = SmasheeGenerator.SG;
 		grid = SG.settledSmasheeGrid;
-
 	}
 
 	void Awake() {
-
-
 		if (Manager != null) Manager = new GameoverManager();
 		else Manager = this;
 
@@ -26,17 +22,15 @@ public class GameoverManager : MonoBehaviour {
 	}
 	
 	void Update () {
-
-
 		for (int x = 0; x < grid.GetLength(0); x++) {
 			for (int y = 0; y < grid.GetLength(1); y++) {
 				if (grid[x, y] != null) columnCount++;
 			}
 
-			if (columnCount >= SG.maxColumns) SG.generate = false;
+			if (columnCount >= SG.maxColumns) 
+				SG.generate = false;
 
 			columnCount = 0;
-
 		}
 	
 	}

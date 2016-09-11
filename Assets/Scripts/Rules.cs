@@ -44,15 +44,6 @@ public class Rules : MonoBehaviour {
 			}
 		}
 
-//		foreach (Smashee smashee in grid) {
-//			if (smashee != null) {
-//				CheckInDirection(smashee, Direction.Horizontal);
-//				CheckInDirection(smashee, Direction.Vertical);
-////				CheckInDirection(smashee, Direction.MainDiagnol);
-////				CheckInDirection(smashee, Direction.AntiDiagnol);
-//			}
-//		}
-
 		dirty = false;
 	}
 
@@ -82,33 +73,8 @@ public class Rules : MonoBehaviour {
 			break;
 		}
 
-		List<Smashee> side1 = new List<Smashee>();
-		List<Smashee> side2 = new List<Smashee>();
-
-		SG.DebugPrintGrid();
-
-
-		try {
-			side1 = GetAdjacent(smashee, direction1, new List<Smashee>());
-		} catch (System.Exception e) {
-			Debug.Log(e);
-			Debug.Log(directionEnum);
-			Debug.Log("Direction 1 OVERFLOW");
-			SG.DebugPrintGrid();
-			Debug.Log(startingSmashee.column + " " + startingSmashee.row);
-			Debug.Break();
-		}
-
-		try {
-			side2 = GetAdjacent(smashee, direction2, new List<Smashee>());
-		} catch (System.Exception e) {
-			Debug.Log(e);
-			Debug.Log(directionEnum);
-			Debug.Log("Direction 2 OVERFLOW");
-			SG.DebugPrintGrid();
-			Debug.Log(startingSmashee.column + " " + startingSmashee.row);
-			Debug.Break();
-		}
+		List<Smashee> side1 = GetAdjacent(smashee, direction1, new List<Smashee>());
+		List<Smashee> side2 = GetAdjacent(smashee, direction2, new List<Smashee>());
 
 		List<Smashee> all = side1.Concat(side2).ToList();
 		all.Add(smashee);
@@ -118,8 +84,6 @@ public class Rules : MonoBehaviour {
 				Destroy(adjacent.gameObject);
 			}
 		}
-
-		if (startingSmashee.debugging) Debug.Log("\n\n\n");
 
 	}
 
@@ -133,11 +97,6 @@ public class Rules : MonoBehaviour {
 			adjacent = grid[x, y];
 
 		if (adjacent != null && adjacent.HasSameShape(smashee)) {
-
-			if (startingSmashee.debugging) {
-				Debug.Log("Adding");
-			}
-
 			list.Add(grid[x, y]);
 			GetAdjacent(grid[x,y], direction, list);
 		}

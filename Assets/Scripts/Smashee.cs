@@ -46,46 +46,17 @@ public class Smashee : MonoBehaviour {
 	
 	void Update () {
 
-		timer += Time.deltaTime; // increases countdown interval evertime currentNum reaches 0
-
-		if (timer >= shapeChangeSpeed && !isStaticShape) {
-			// CycleShapeCounter();
-			// SetRandomShapeCounter();
-			timer = 0;
-		}
-
-//		previouslySleeping = currentlySleeping;
-//		currentlySleeping = rb.IsSleeping();
-
-//		if (currentlySleeping && !previouslySleeping) {
-//
-//			CalculateRow();
-//			SG.AddToGrid(this);
-//			Rules.RulePatterns.dirty = true;
-//			ChangeOpacity(.5f);
-//
-//		} else if (!currentlySleeping) {
-//
-//			SG.RemoveFromGrid(this);	
-//			ChangeOpacity(1);
-//
-//		}
-
 		if (sf.currentState != sf.lastState) { //only if state changed
-
 			if (sf.currentState == SmasheeFall.State.Settled) {
 				CalculateRow();
 				SG.AddToGrid(this);
-				ChangeOpacity(.5f);
+				ChangeOpacity(1f);
 				Rules.RulePatterns.dirty = true;
 			} else {
 				SG.RemoveFromGrid(this);	
-				sf.velocity = 3.24f;
-				ChangeOpacity(1);
+				ChangeOpacity(.5f);
 			}
-
 		}	
-
 	}
 
 	void ChangeOpacity(float opacity) {

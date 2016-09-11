@@ -9,8 +9,9 @@ public class SmasheeFall : MonoBehaviour {
 	public State currentState;
 	public State lastState;
 
-	public float gravity;
-	public float velocity;
+	public float acceleration;
+	public float initVelocity;
+	float velocity;
 
 
 	Rigidbody2D rb;
@@ -19,12 +20,13 @@ public class SmasheeFall : MonoBehaviour {
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
 		bc = GetComponent<BoxCollider2D>();
+		velocity = initVelocity;
 	}
 	
 	void Update () {
 
-		velocity = velocity * gravity;
-		Vector3 displacement = Vector3.down * Time.deltaTime * velocity;
+		velocity += acceleration * Time.deltaTime;
+		Vector3 displacement = Vector3.down  * velocity;
 
 		float horizontalTolerance = .9f;
 		float extentX = bc.bounds.extents.x * horizontalTolerance;
@@ -57,8 +59,12 @@ public class SmasheeFall : MonoBehaviour {
 			velocity = 0;
 			lastState = currentState;
 			currentState = State.Settled;
-		} else {
-			
+
+		} else {			
+
+			if (lastState == State.Settled) 
+				velocity = initVelocity;
+
 			transform.position += displacement;
 			lastState = currentState;
 			currentState = State.Falling;
