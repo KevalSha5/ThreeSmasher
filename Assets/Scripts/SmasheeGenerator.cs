@@ -10,10 +10,8 @@ public class SmasheeGenerator : MonoBehaviour {
 	public float staticShapeProbability;
 	public GameObject smasheePrefab;
 
-	public int maxRows;
-	public int maxColumns;
-
-	public int[] numSmasheeInColumn;
+	public int maxColumns; //x
+	public int maxRows; //y 
 
 	float[] instantiationXPoints;
 	float horizontalExtent; //orthographic width of screen
@@ -25,8 +23,7 @@ public class SmasheeGenerator : MonoBehaviour {
 
 	void Awake() {
 
-		settledSmasheeGrid = new Smashee[maxRows, maxColumns];
-		numSmasheeInColumn = new int[maxRows];
+		settledSmasheeGrid = new Smashee[maxColumns, maxRows];
 
 		if (SG != null) SG = new SmasheeGenerator();
 		else SG = this;
@@ -37,12 +34,12 @@ public class SmasheeGenerator : MonoBehaviour {
 
 	void Start () {
 		
-		instantiationXPoints = new float[maxRows];
+		instantiationXPoints = new float[maxColumns];
 		horizontalExtent = Camera.main.orthographicSize * Screen.width / Screen.height;
 
 		// set up the x-coordinates for the spawning points
 		float smasheeWidth = smasheePrefab.GetComponentInChildren<SpriteRenderer>().bounds.extents.x * 2f;
-		for (int i = 0; i < maxRows; i++) {
+		for (int i = 0; i < maxColumns; i++) {
 			instantiationXPoints[i] = -horizontalExtent + i * smasheeWidth + smasheeWidth / 2f;
 		}
 
@@ -106,12 +103,28 @@ public class SmasheeGenerator : MonoBehaviour {
 	}
 
 	public bool CheckGridBounds(int x, int y) {
-		if (x < 0 || x >= maxRows || y < 0 || y >= maxColumns) {
+		if (x < 0 || x >= maxColumns || y < 0 || y >= maxRows) {
 			return false;
 			Debug.LogError("Something went wrong with CheckBounds, this shouldn't be happening");
 		}
 
 		return true;
+
+	}
+
+	public void CheckForDuplicates() {
+
+		foreach (Smashee smashee in settledSmasheeGrid) {
+			foreach (Smashee other in settledSmasheeGrid) {
+
+				if (smashee.column == other.column && smashee.row == other.row) continue;
+
+				if (smashee.gameObject == other.gameObject) 
+					Debug.Log("Duplcate found! " + smashee.column + ", " + smashee.row);
+
+			}
+		}
+			
 
 	}
 

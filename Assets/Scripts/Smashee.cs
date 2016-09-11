@@ -47,15 +47,16 @@ public class Smashee : MonoBehaviour {
 	void Update () {
 
 		if (sf.currentState != sf.lastState) { //only if state changed
+			
 			if (sf.currentState == SmasheeFall.State.Settled) {
 				CalculateRow();
 				SG.AddToGrid(this);
-				ChangeOpacity(1f);
-				Rules.RulePatterns.dirty = true;
+				Rules.RulePatterns.RequestPatternCheck(this);
 			} else {
-				SG.RemoveFromGrid(this);	
-				ChangeOpacity(.5f);
+				SG.RemoveFromGrid(this);
+				NullifyRow();
 			}
+
 		}	
 	}
 
@@ -63,6 +64,10 @@ public class Smashee : MonoBehaviour {
 		Color color = square.color;
 		color.a = opacity;
 		square.color = color;
+	}
+
+	void NullifyRow() {
+		this.row = -1;
 	}
 
 	void SetRandomShape() {
@@ -85,7 +90,7 @@ public class Smashee : MonoBehaviour {
 		// shapes[currentShapeCounter].ExecuteUnityEvent();
 		if (isStaticShape) return;
 		CycleShape();
-		Rules.RulePatterns.dirty = true;
+		Rules.RulePatterns.RequestPatternCheck(this);
 	}
 
 	void CalculateRow() {

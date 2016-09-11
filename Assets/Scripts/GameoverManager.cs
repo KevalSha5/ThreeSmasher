@@ -27,7 +27,7 @@ public class GameoverManager : MonoBehaviour {
 				if (grid[x, y] != null) columnCount++;
 			}
 
-			if (columnCount >= SG.maxColumns) 
+			if (columnCount >= SG.maxRows) 
 				SG.generate = false;
 
 			columnCount = 0;
