@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class Smashee : MonoBehaviour {
 
+	public static float width = -1f;
+	public static float height = -1f;
+
 	public ShapeEffect[] shapes;
 	public int currentShapeCounter = 0;
 	int nextShapeCounter = 0;
@@ -19,6 +22,7 @@ public class Smashee : MonoBehaviour {
 	SmasheeFall sf;
 
 	SmasheeGenerator SG = SmasheeGenerator.SG;
+	PatternChecker PC = PatternChecker.PC;
 
 	public int column;
 	public int row;
@@ -29,7 +33,7 @@ public class Smashee : MonoBehaviour {
 	public bool isStaticShape;
 	public bool debugging = false;
 
-	void Start() {
+	void Awake() {
 
 		//rb = GetComponent<Rigidbody2D>();
 		sf = GetComponent<SmasheeFall>();
@@ -51,13 +55,14 @@ public class Smashee : MonoBehaviour {
 			if (sf.currentState == SmasheeFall.State.Settled) {
 				CalculateRow();
 				SG.AddToGrid(this);
-				Rules.RulePatterns.RequestPatternCheck(this);
+				PC.RequestPatternCheck(this);
 			} else {
 				SG.RemoveFromGrid(this);
 				NullifyRow();
 			}
 
 		}	
+
 	}
 
 	void ChangeOpacity(float opacity) {
@@ -70,8 +75,18 @@ public class Smashee : MonoBehaviour {
 		this.row = -1;
 	}
 
+	public void RequsetShape(int newShape) {
+		if (newShape < 0 || newShape >= shapes.Length) return;
+		SetShape(newShape);
+	}
+
 	void SetRandomShape() {
 		nextShapeCounter = Random.Range(0, shapes.Length);
+		ActivateNextShape();
+	}
+
+	void SetShape(int shape) {
+		nextShapeCounter = shape;
 		ActivateNextShape();
 	}
 
@@ -90,8 +105,8 @@ public class Smashee : MonoBehaviour {
 		// shapes[currentShapeCounter].ExecuteUnityEvent();
 		if (isStaticShape) return;
 		CycleShape();
-		Rules.RulePatterns.RequestPatternCheck(this);
-	}
+		PC.RequestPatternCheck(this);
+	} 
 
 	void CalculateRow() {
 		Vector2 start = transform.position;
@@ -101,11 +116,20 @@ public class Smashee : MonoBehaviour {
 
 		RaycastHit2D[] hits = Physics2D.LinecastAll(start, end, LayerMask.GetMask("Smashee"));
 
-		row = hits.Length - 1; //the raycast will also hit this smashee, so decrement by 1
+		row = hits.Length - 1; //the raycast will also hit its own collider, so decrement by 1
+	}
+
+	public static void SetDimensions(float x, float y) {
+		width = x;
+		height = y;
 	}
 
 	public bool HasSameShape(Smashee smashee) {
 		return this.currentShapeCounter == smashee.currentShapeCounter;
+	}
+
+	public override string ToString() {
+		return string.Format("[{0:D}, {1:D}]", column, row);
 	}
 
 	void OnDestroy() {

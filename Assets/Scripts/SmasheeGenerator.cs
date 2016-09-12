@@ -28,21 +28,25 @@ public class SmasheeGenerator : MonoBehaviour {
 		if (SG != null) SG = new SmasheeGenerator();
 		else SG = this;
 
-		DontDestroyOnLoad(this);
+		DontDestroyOnLoad(this);		
 
-	}
 
-	void Start () {
-		
 		instantiationXPoints = new float[maxColumns];
 		horizontalExtent = Camera.main.orthographicSize * Screen.width / Screen.height;
 
 		// set up the x-coordinates for the spawning points
+		// TODO: Use WIDTH AND HEIGHT as static variables in Smashee.cs
 		float smasheeWidth = smasheePrefab.GetComponentInChildren<SpriteRenderer>().bounds.extents.x * 2f;
+		float smasheeHeight = smasheePrefab.GetComponentInChildren<SpriteRenderer>().bounds.extents.y * 2f;
+		Smashee.SetDimensions(smasheeWidth, smasheeHeight);
+
 		for (int i = 0; i < maxColumns; i++) {
-			instantiationXPoints[i] = -horizontalExtent + i * smasheeWidth + smasheeWidth / 2f;
+			instantiationXPoints[i] = -horizontalExtent + i * Smashee.width + Smashee.width / 2f;
 		}
 
+	}
+
+	void Start () {
 
 	}	
 
@@ -53,19 +57,25 @@ public class SmasheeGenerator : MonoBehaviour {
 		if (timer <= 0 && generate) {
 
 			int column = Random.Range(0, instantiationXPoints.Length);
-			float x = instantiationXPoints[column];
-			float y = Camera.main.orthographicSize * .6f; // 80% height?? (orthographicSize is half of screen)
-
-			Vector3 pos = new Vector3(x, y, 0);
-			GameObject newSmasheeObj = (GameObject)Instantiate(smasheePrefab, pos, Quaternion.identity);
-			Smashee newSmasheeScript = newSmasheeObj.GetComponent<Smashee>();
-			newSmasheeScript.column = column;
-
-			if (Random.value <= staticShapeProbability) newSmasheeScript.isStaticShape = true;
+			NewSmashee(column);
 
 			timer = instantiationDelay;
 		}
 
+	}
+
+	public void NewSmashee(int column, int shape = -1) {
+		float x = instantiationXPoints[column];
+		float y = Camera.main.orthographicSize * .6f; // 80% height?? (orthographicSize is half of screen)
+
+		Vector3 pos = new Vector3(x, y, 0);
+		GameObject newSmasheeObj = (GameObject)Instantiate(smasheePrefab, pos, Quaternion.identity);
+
+		Smashee newSmasheeScript = newSmasheeObj.GetComponent<Smashee>();
+		newSmasheeScript.column = column;
+		newSmasheeScript.RequsetShape(shape);
+
+		if (Random.value <= staticShapeProbability) newSmasheeScript.isStaticShape = true;
 	}
 
 	public void DebugPrintGrid() {
@@ -82,13 +92,17 @@ public class SmasheeGenerator : MonoBehaviour {
 		Debug.Log(grid);
 	}
 
+	public Smashee GetSmashee (int column, int row) {
+		if (CheckGridBounds(column, row)) return settledSmasheeGrid[column, row];
+		else return null;
+	}
+
 	public void RemoveFromGrid(Smashee smashee) {
 		int column = smashee.column;
 		int row = smashee.row;
 
 		if (CheckGridBounds(column, row)) {
-			lock(settledSmasheeGrid)
-				settledSmasheeGrid[column, row] = null;
+			settledSmasheeGrid[column, row] = null;
 		}
 	}
 
@@ -97,15 +111,13 @@ public class SmasheeGenerator : MonoBehaviour {
 		int row = smashee.row;
 
 		if (CheckGridBounds(column, row)) {
-			lock(settledSmasheeGrid)
-				settledSmasheeGrid[column, row] = smashee;
+			settledSmasheeGrid[column, row] = smashee;
 		}
 	}
 
 	public bool CheckGridBounds(int x, int y) {
 		if (x < 0 || x >= maxColumns || y < 0 || y >= maxRows) {
 			return false;
-			Debug.LogError("Something went wrong with CheckBounds, this shouldn't be happening");
 		}
 
 		return true;
