@@ -19,44 +19,65 @@ public class Pattern {
 	public static GameObject particlePrefab;
 	ParticleSystem particleSystem;
 
-	public Pattern(List<Smashee> list) {
+	public Pattern(List<Smashee> list, Orientation orientation) {
 
 		if (allPatterns == null) allPatterns = new List<Pattern>();
 		if (particlePrefab == null) particlePrefab = (GameObject)Resources.Load("PatternFlare");
 
 		this.list = list;
+		this.orientation = orientation;
 		count = list.Count;
 
 		InitVariables();
 
 		List<Pattern> patternsToRemove = new List<Pattern>();
+		bool adoptedSystem = false;
+
 		foreach (Pattern other in allPatterns) {
+			
+			if (this.EqualsPattern(other)) { // same pattern 
 
-			if (this.ContainsPattern(other)) {
-//				Debug.Log("Found a subset");
-				patternsToRemove.Add(other);
-			} 
-
-			if (this.EqualsPattern(other)) {
-				Debug.Log("Found an equal!");
+//				Debug.Log("Found a duplicate");
 				return;
+
 			}
+			
+			if (this.ContainsPattern(other)) { // better pattern
+
+				patternsToRemove.Add(other);
+				AdoptParticleSystem(other);
+				adoptedSystem = true;
+
+			} 
 
 		}
 
-		AddToAllPatterns();
-	
-		PositionParticleSystem();
-		ActivateParticleSystem();
+		if (!adoptedSystem)	NewParticleSystem(); // brand new 
 
+		AddToAllPatterns();
 
 		foreach (Pattern other in patternsToRemove)
 			other.RemovePatternFromAll();
 
 	}
 
+	void NewParticleSystem() {
+//		if (allPatterns.Count == 0) Debug.Log("Frist Pattern");
+//		Debug.Log("New Pattern");
+//		Debug.Log(this);
+		PositionParticleSystem();
+		ActivateParticleSystem();
+	}
+
+	void AdoptParticleSystem(Pattern other) {
+//		Debug.Log("Adopted Pattern");
+//		Debug.Log(this + " contains " + other);
+		this.particleSystem = other.particleSystem;
+		PositionParticleSystem();
+	}
+
 	void InitVariables() {
-		DetermineOrientation();
+		if (orientation == null) DetermineOrientation();
 		DetermineFirst();
 		DetermineLast();
 		DetermineMiddle();
@@ -79,7 +100,9 @@ public class Pattern {
 	}
 
 	void PositionParticleSystem() {
-		particleSystem = ((GameObject)MonoBehaviour.Instantiate(particlePrefab)).GetComponent<ParticleSystem>();
+
+		if (particleSystem == null)
+			particleSystem = ((GameObject)MonoBehaviour.Instantiate(particlePrefab)).GetComponent<ParticleSystem>();
 
 		Vector3 box = Vector3.zero;
 		box.x = Smashee.width;
@@ -90,7 +113,7 @@ public class Pattern {
 
 		ParticleSystem.ShapeModule shape = particleSystem.shape;
 		shape.box = box;
-
+		 
 		Vector3 pos = Vector3.zero;
 		if (count%2 != 0) {
 			pos.x = middle[0].transform.position.x;
@@ -110,8 +133,6 @@ public class Pattern {
 
 	void DetermineFirst() {
 
-		if (orientation == null) Debug.LogError("Orientation not set");
-
 		foreach (Smashee s in list) {
 			if (first == null) first = s;	
 
@@ -125,8 +146,6 @@ public class Pattern {
 	}
 
 	void DetermineLast() {
-
-		if (orientation == null) Debug.LogError("Orientation not set");
 
 		foreach (Smashee s in list) {
 
@@ -181,8 +200,9 @@ public class Pattern {
 
 	}
 
-
 	bool ContainsPattern(Pattern other) {
+//		Debug.Log("Checking " + this + " contains " + other);
+//		Debug.Log("Result: " + !other.list.Except(this.list).Any());
 		return !other.list.Except(this.list).Any();
 	}
 
@@ -192,6 +212,7 @@ public class Pattern {
 
 		if (this.list == null || other.list == null) return false;
 		if (this.list.Count != other.list.Count) return false;
+		if (this.orientation != other.orientation) return false;
 
 		Dictionary<Smashee, int> hash = new Dictionary<Smashee, int>();
 
@@ -211,9 +232,9 @@ public class Pattern {
 	private void AddToAllPatterns() {
 		allPatterns.Add(this);
 
-		foreach (Smashee smashee in list) {
-			smashee.square.color = Color.white;
-		}
+//		foreach (Smashee smashee in list) {
+//			smashee.square.color = Color.white;
+//		}
 
 	}
 

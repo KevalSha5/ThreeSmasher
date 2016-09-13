@@ -61,8 +61,10 @@ public class PatternChecker : MonoBehaviour {
 		List<Smashee> horizontalPattern = GetPattern(smashee, horizontal);
 		List<Smashee> verticalPattern = GetPattern(smashee, vertical);
 
-		if (horizontalPattern.Count >= requiredLength) new Pattern(horizontalPattern);
-		if (verticalPattern.Count >= requiredLength) new Pattern(verticalPattern);
+		if (horizontalPattern.Count >= requiredLength) 
+			new Pattern(horizontalPattern, Pattern.Orientation.Horizontal);
+		if (verticalPattern.Count >= requiredLength) 
+			new Pattern(verticalPattern, Pattern.Orientation.Vertical);
 	}
 
 	void DestroyPattern(List<Smashee> list) {

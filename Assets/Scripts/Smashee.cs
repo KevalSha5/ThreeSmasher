@@ -34,18 +34,19 @@ public class Smashee : MonoBehaviour {
 	public bool debugging = false;
 
 	void Awake() {
-
 		//rb = GetComponent<Rigidbody2D>();
 		sf = GetComponent<SmasheeFall>();
 
 		shapes = GetComponentsInChildren<ShapeEffect>();
 		foreach (ShapeEffect effect in shapes)
 			effect.gameObject.SetActive(false);
+		
+		SetRandomShape();
+	}
 
+	void Start () {
 		if (isStaticShape) square.color = staticSquareColor;
 		else square.color = nonstaticSquareColor;
-
-		SetRandomShape();
 	}
 	
 	void Update () {
