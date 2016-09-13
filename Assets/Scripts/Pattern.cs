@@ -65,7 +65,7 @@ public class Pattern {
 //		if (allPatterns.Count == 0) Debug.Log("Frist Pattern");
 //		Debug.Log("New Pattern");
 //		Debug.Log(this);
-		PositionParticleSystem();
+		SetupParticleSystem();
 		ActivateParticleSystem();
 	}
 
@@ -73,7 +73,7 @@ public class Pattern {
 //		Debug.Log("Adopted Pattern");
 //		Debug.Log(this + " contains " + other);
 		this.particleSystem = other.particleSystem;
-		PositionParticleSystem();
+		SetupParticleSystem();
 	}
 
 	void InitVariables() {
@@ -99,10 +99,12 @@ public class Pattern {
 		}
 	}
 
-	void PositionParticleSystem() {
+	void SetupParticleSystem() {
 
 		if (particleSystem == null)
 			particleSystem = ((GameObject)MonoBehaviour.Instantiate(particlePrefab)).GetComponent<ParticleSystem>();
+
+//		particleSystem.startColor = new Color(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255));
 
 		Vector3 box = Vector3.zero;
 		box.x = Smashee.width;

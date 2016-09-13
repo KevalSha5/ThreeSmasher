@@ -102,12 +102,20 @@ public class Smashee : MonoBehaviour {
 		currentShapeCounter = nextShapeCounter;
 	}
 
-	void OnMouseDown() { // checks if mouse pressed on collider
-		// shapes[currentShapeCounter].ExecuteUnityEvent();
+	public void TriggerPress() {
 		if (isStaticShape) return;
 		CycleShape();
 		PC.RequestPatternCheck(this);
+	}
+
+	void OnMouseDown() { // checks if mouse pressed on collider
+		// shapes[currentShapeCounter].ExecuteUnityEvent();
+//		InputManager.IM.SetDown(this);
 	} 
+
+	void OnMouseUp() {
+//		InputManager.IM.SetUp(this);
+	}
 
 	void CalculateRow() {
 		Vector2 start = transform.position;
