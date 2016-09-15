@@ -11,7 +11,6 @@ public class Pattern {
 	public static GameObject particlePrefab;
 	ParticleSystem particleSystem;
 
-	int smasheeCount = 0;
 	List<Smashee> list;
 	public static List<Pattern> activePatterns;
 
@@ -33,10 +32,10 @@ public class Pattern {
 
 		this.list = list;
 		this.orientation = orientation;
-		smasheeCount = list.Count;
 
-		DetermineFirstAndLast();
-		DetermineMiddle();
+		SortList();
+		SetFirstLast();
+		SetMiddle();
 
 		Pattern patternToRemove = null;
 		bool adoptedParticleSystem = false;
@@ -71,10 +70,18 @@ public class Pattern {
 		activePatterns.Remove(this);
 	}
 
-	public void DestroyPattern () {
-		foreach (Smashee smashee in list)
+	public void CrushPattern () {
+		foreach (Smashee smashee in list) {
+			PatternChecker.PC.CheckBrokenPatterns(smashee);
 			MonoBehaviour.Destroy(smashee.gameObject);
+		}
+			
 
+		DestoryParticleSystem();
+		RemovePatternFromAll();
+	}
+
+	public void ForgetPattern() {
 		DestoryParticleSystem();
 		RemovePatternFromAll();
 	}
@@ -106,16 +113,17 @@ public class Pattern {
 		box.x = Smashee.width;
 		box.z = Smashee.height;
 
-		if (orientation == Orientation.Horizontal) box.x *= smasheeCount;
-		if (orientation == Orientation.Vertical) box.z *= smasheeCount;
+		if (orientation == Orientation.Horizontal) box.x *= list.Count;
+		if (orientation == Orientation.Vertical) box.z *= list.Count;
 
 		ParticleSystem.ShapeModule shape = particleSystem.shape;
 		shape.box = box;
 		 
 		Vector3 pos = Vector3.zero;
-		if (smasheeCount % 2 != 0) {
+		if (list.Count % 2 != 0) {
 			pos.x = middle[0].transform.position.x;
 			pos.y = middle[0].transform.position.y;
+
 		} else {
 			pos.x = (middle[0].transform.position.x + middle[1].transform.position.x) / 2f;
 			pos.y = (middle[0].transform.position.y + middle[1].transform.position.y) / 2f;
@@ -133,9 +141,12 @@ public class Pattern {
 		return false;
 	}
 
-
 	public bool ContainsPattern (Pattern other) {
 		return !other.list.Except(this.list).Any();
+	}
+
+	public bool ContainsSmashee (Smashee smashee) {
+		return list.Contains(smashee);
 	}
 
 	public bool EqualsPattern (Pattern other) {
@@ -143,57 +154,42 @@ public class Pattern {
 			|| (this.first == other.last && this.last == other.first);
 	}
 
-	void DetermineFirstAndLast() {
-
-		foreach (Smashee s in list) {
-
-			if (first == null) first = s;
-			if (last == null) last = s;
-
-			if (orientation == Orientation.Horizontal) {
-				if (s.column < first.column) first = s; 
-				else if (s.column > last.column) last = s; 
-			} else if (orientation == Orientation.Vertical) {
-				if (s.row < first.row) first = s;
-				else if (s.row > last.row) first = s;
-			}
-
-		}
-
+	public Smashee GetSmasheeOtherThan (Smashee smashee) {
+		int index = list.IndexOf(smashee);
+		return list.ElementAt(index == 0 ? 1 : 0);
 	}
 
-	void DetermineMiddle () {
+	void SortList () {
+		if (orientation == Orientation.Horizontal) {
+			list.Sort((s1, s2) => s1.column.CompareTo(s2.column));
+
+		} else if (orientation == Orientation.Vertical) {
+			list.Sort((s1, s2) => s1.row.CompareTo(s2.row));
+
+		}
+	}
+
+	void SetFirstLast () {
+		first = list.First();
+		last = list.Last();
+	}
+
+	void SetMiddle () {
 
 		if (first == null || last == null) Debug.LogError("Error on Determine Middle");
 
-		if (smasheeCount % 2 != 0) {
+		if (list.Count %2 == 0) {
 
-			int middleIndex = -1;
+			int middleIndex1 = list.Count/2;
+			int middleIndex2 = list.Count/2 - 1;
 
-			if (orientation == Orientation.Horizontal) {
-				middleIndex = (first.column + last.column) / 2;
-				middle[0] = SmasheeGenerator.SG.GetSmashee(middleIndex, first.row);
-			} else {
-				middleIndex = (first.row + last.row) / 2;
-				middle[0] = SmasheeGenerator.SG.GetSmashee(first.column, middleIndex);
-			}
+			middle[0] = list.ElementAt(middleIndex1);
+			middle[1] = list.ElementAt(middleIndex2);
 
 		} else {
 
-			int middleIndex1 = -1;
-			int middleIndex2 = -1;
-
-			if (orientation == Orientation.Horizontal) {
-				middleIndex1 = first.column + smasheeCount / 2 - 1;
-				middleIndex2 = last.column - smasheeCount / 2 + 1;
-				middle[0] = SmasheeGenerator.SG.GetSmashee(middleIndex1, first.row);
-				middle[1] = SmasheeGenerator.SG.GetSmashee(middleIndex2, first.row);
-			} else {
-				middleIndex1 = first.row + smasheeCount / 2 - 1;
-				middleIndex2 = last.row - smasheeCount / 2 + 1;
-				middle[0] = SmasheeGenerator.SG.GetSmashee(first.column, middleIndex1);
-				middle[1] = SmasheeGenerator.SG.GetSmashee(first.column, middleIndex2);
-			}
+			int middleIndex = (list.Count - 1)/2;
+			middle[0] = list.ElementAt(middleIndex);
 
 		}
 

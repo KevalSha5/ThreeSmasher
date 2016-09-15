@@ -58,11 +58,12 @@ public class PatternChecker : MonoBehaviour {
 			}
 		}
 
-		if (swipedPattern != null) swipedPattern.DestroyPattern();
+		if (swipedPattern != null) swipedPattern.CrushPattern();
 
 	}
 
 	public void RequestPatternCheck (Smashee smashee) { //For a particular smashee
+		CheckBrokenPatterns(smashee);
 		CheckForPatterns(smashee);
 	}
 
@@ -71,6 +72,26 @@ public class PatternChecker : MonoBehaviour {
 		// untested
 		foreach (Smashee smashee in SG.GetSmasheesOnGrid()) {
 			CheckForPatterns(smashee);
+		}
+
+	}
+
+	public void CheckBrokenPatterns (Smashee smashee) {
+
+		if (Pattern.activePatterns == null) return;
+
+		List<Pattern> brokenPatterns = new List<Pattern>();
+
+		foreach (Pattern pattern in Pattern.activePatterns) {
+			if (pattern.ContainsSmashee(smashee)) {
+				brokenPatterns.Add(pattern);
+			}
+		}
+
+		foreach (Pattern pattern in brokenPatterns) {
+			Smashee otherSmashee = pattern.GetSmasheeOtherThan(smashee);
+			CheckForPatterns(otherSmashee);
+			pattern.ForgetPattern();
 		}
 
 	}

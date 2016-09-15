@@ -31,8 +31,12 @@ public class InputManager : MonoBehaviour {
 	void CheckPress() {
 
 		if (down == null || up == null) return;
-		if (down == up) down.TriggerPress();
-		else PatternChecker.PC.CheckUserSwipedPattern(down, up);
+		if (down == up) {
+			down.TriggerPress();
+			PatternChecker.PC.RequestPatternCheck(down);
+		} else {
+			PatternChecker.PC.CheckUserSwipedPattern(down, up);
+		}
 
 	}
 

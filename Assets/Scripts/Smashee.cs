@@ -105,7 +105,6 @@ public class Smashee : MonoBehaviour {
 	public void TriggerPress() {
 		if (isStaticShape) return;
 		CycleShape();
-		PC.RequestPatternCheck(this);
 	}
 
 	void OnMouseDown() { // checks if mouse pressed on collider
