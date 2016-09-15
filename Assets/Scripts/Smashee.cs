@@ -76,7 +76,7 @@ public class Smashee : MonoBehaviour {
 		this.row = -1;
 	}
 
-	public void RequsetShape(int newShape) {
+	public void RequestShape(int newShape) {
 		if (newShape < 0 || newShape >= shapes.Length) return;
 		SetShape(newShape);
 	}

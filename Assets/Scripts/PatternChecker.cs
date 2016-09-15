@@ -12,7 +12,7 @@ public class PatternChecker : MonoBehaviour {
 		public Vector2 direction1;
 		public Vector2 direction2;
 
-		public Direction(Vector2 direction1, Vector2 direction2) {
+		public Direction (Vector2 direction1, Vector2 direction2) {
 			this.direction1 = direction1;
 			this.direction2 = direction2;
 		}
@@ -27,53 +27,67 @@ public class PatternChecker : MonoBehaviour {
 	Smashee[,] grid;
 	int requiredLength = 3;
 
-	void Awake() {
+	void Awake () {
 
-		if (PC != null) PC = new PatternChecker();
-		else PC = this;
+		if (PC == null)
+			PC = this;
+		else if (PC != this)
+			Destroy(this);
 
 		DontDestroyOnLoad(this);
 
 	}
 
-	void Start() {
+	void Start () {
 		SG = SmasheeGenerator.SG;
 		grid = SG.settledSmasheeGrid;
+	}
+
+
+	public void CheckUserSwipedPattern (Smashee down, Smashee up) {
+		
+		if (Pattern.activePatterns == null)
+			return;
+
+		Pattern swipedPattern = null;
+
+		foreach (Pattern pattern in Pattern.activePatterns) {
+			if (pattern.HasEnds(down, up)) {
+				swipedPattern = pattern;
+				break;
+			}
+		}
+
+		if (swipedPattern != null) swipedPattern.DestroyPattern();
 
 	}
 
-	public void RequestPatternCheck(Smashee smashee) {
+	public void RequestPatternCheck (Smashee smashee) { //For a particular smashee
 		CheckForPatterns(smashee);
 	}
 
-	public void RequestPatternCheck() {
-		for (int x = 0; x < grid.GetLength(0); x++) {
-			for (int y = 0; y < grid.GetLength(1); y++) {
-
-				if (grid[x, y] == null) continue;
-				CheckForPatterns(grid[x, y]);
-
-			}
+	public void RequestPatternCheck () {
+	
+		// untested
+		foreach (Smashee smashee in SG.GetSmasheesOnGrid()) {
+			CheckForPatterns(smashee);
 		}
+
 	}
 
-	void CheckForPatterns(Smashee smashee) {
+	void CheckForPatterns (Smashee smashee) {
+		
 		List<Smashee> horizontalPattern = GetPattern(smashee, horizontal);
 		List<Smashee> verticalPattern = GetPattern(smashee, vertical);
 
-		if (horizontalPattern.Count >= requiredLength) 
-			new Pattern(horizontalPattern, Pattern.Orientation.Horizontal);
-		if (verticalPattern.Count >= requiredLength) 
-			new Pattern(verticalPattern, Pattern.Orientation.Vertical);
+		if (horizontalPattern != null)
+			Pattern.NewPattern(horizontalPattern, Pattern.Orientation.Horizontal);
+		if (verticalPattern != null)
+			Pattern.NewPattern(verticalPattern, Pattern.Orientation.Vertical);
+		
 	}
 
-	void DestroyPattern(List<Smashee> list) {
-		foreach (Smashee smashee in list) {
-			Destroy(smashee.gameObject);
-		}
-	}
-
-	List<Smashee> GetPattern(Smashee smashee, Direction direction) {
+	List<Smashee> GetPattern (Smashee smashee, Direction direction) {
 
 		Vector2 direction1 = direction.direction1; //assiging Vector.zero leads to infinte loop
 		Vector2 direction2 = direction.direction2;
@@ -84,21 +98,21 @@ public class PatternChecker : MonoBehaviour {
 		List<Smashee> all = side1.Concat(side2).ToList();
 		all.Add(smashee);
 
-		return all;
+		if (all.Count >= requiredLength) return all;
+		else return null;
+
 	}
 
-	List<Smashee> GetAdjacent(Smashee smashee, Vector2 direction, List<Smashee> list) {
+	List<Smashee> GetAdjacent (Smashee smashee, Vector2 direction, List<Smashee> list) {
 		
 		int x = smashee.column + (int)direction.x;
 		int y = smashee.row + (int)direction.y;
 
-		Smashee adjacent = null;
-		if (SG.CheckGridBounds(x, y))
-			adjacent = grid[x, y];
+		Smashee adjacent = SG.GetSmashee(x, y);
 
 		if (adjacent != null && adjacent.HasSameShape(smashee)) {
-			list.Add(grid[x, y]);
-			GetAdjacent(grid[x,y], direction, list);
+			list.Add(adjacent);
+			GetAdjacent(adjacent, direction, list);
 		}
 
 		return list;

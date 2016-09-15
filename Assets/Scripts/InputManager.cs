@@ -30,7 +30,9 @@ public class InputManager : MonoBehaviour {
 
 	void CheckPress() {
 
+		if (down == null || up == null) return;
 		if (down == up) down.TriggerPress();
+		else PatternChecker.PC.CheckUserSwipedPattern(down, up);
 
 	}
 
@@ -44,9 +46,7 @@ public class InputManager : MonoBehaviour {
 
 			Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			Vector2 point2D = new Vector2(point.x, point.y);
-
-			Collider2D collider = Physics2D.OverlapPoint(point2D, LayerMask.GetMask("Smashee"));
-			SetDown(collider.gameObject.GetComponent<Smashee>());
+			SetDown(SmasheeGenerator.SG.GetSmasheeFromPixelCoord(point2D));
 
 		}
 
@@ -54,9 +54,19 @@ public class InputManager : MonoBehaviour {
 
 			Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			Vector2 point2D = new Vector2(point.x, point.y);
+			SetUp(SmasheeGenerator.SG.GetSmasheeFromPixelCoord(point2D));
 
-			Collider2D collider = Physics2D.OverlapPoint(point2D, LayerMask.GetMask("Smashee"));
-			SetUp(collider.gameObject.GetComponent<Smashee>());
+		}
+
+		if (Input.GetKeyDown(KeyCode.F1)) {
+
+			SmasheeGenerator.SG.DebugPrintGrid();
+
+		}
+
+		if (Input.GetKeyDown(KeyCode.F2)) {
+
+			SmasheeGenerator.SG.generate = !SmasheeGenerator.SG.generate;
 
 		}
 
