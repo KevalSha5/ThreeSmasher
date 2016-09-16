@@ -15,13 +15,13 @@ public class ShapeEffect : MonoBehaviour {
 	}
 
 	public void LosePoints(int points) {
-		PointsManager.Points.Lose(points);
+		PointsManager.PM.Lose(points);
 		PointsFloatingText("-" + points, pointsLostColor);
 		DestorySmashee();
 	}
 
 	public void GainPoints(int points) {
-		PointsManager.Points.Gain(points);
+		PointsManager.PM.Gain(points);
 		PointsFloatingText("+" + points, pointsGainedColor);
 		DestorySmashee();
 	}

@@ -18,7 +18,6 @@ public class SmasheeFall : MonoBehaviour {
 	BoxCollider2D bc;
 
 	void Start () {
-		rb = GetComponent<Rigidbody2D>();
 		bc = GetComponent<BoxCollider2D>();
 		velocity = initVelocity;
 	}

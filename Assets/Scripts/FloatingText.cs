@@ -8,7 +8,6 @@ public class FloatingText : MonoBehaviour {
 	public float fadeSpeed;
 	public float floatSpeed;
 
-
 	void Update () {
 	
 		textColor = textMesh.color;

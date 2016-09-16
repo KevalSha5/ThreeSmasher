@@ -20,12 +20,10 @@ public class PatternChecker : MonoBehaviour {
 
 	Direction horizontal = new Direction(Vector2.left, Vector2.right);
 	Direction vertical = new Direction(Vector2.up, Vector2.down);
-	Direction mainDiagnol = new Direction(Vector2.down + Vector2.left, Vector2.up + Vector2.right);
-	Direction antiDiagnol = new Direction(Vector2.up + Vector2.left, Vector2.down + Vector2.right);
 
 	SmasheeGenerator SG;
-	Smashee[,] grid;
 	int requiredLength = 3;
+	int selectionTolerance = 2;
 
 	void Awake () {
 
@@ -40,22 +38,35 @@ public class PatternChecker : MonoBehaviour {
 
 	void Start () {
 		SG = SmasheeGenerator.SG;
-		grid = SG.settledSmasheeGrid;
+		Pattern.activePatterns = new List<Pattern>();
 	}
 
 
 	public void CheckUserSwipedPattern (Smashee down, Smashee up) {
-		
-		if (Pattern.activePatterns == null)
-			return;
 
 		Pattern swipedPattern = null;
 
 		foreach (Pattern pattern in Pattern.activePatterns) {
+
 			if (pattern.HasEnds(down, up)) {
 				swipedPattern = pattern;
 				break;
+
+			} else {
+
+				if (!(pattern.ContainsSmashee(down) && pattern.ContainsSmashee(up))) continue;
+
+				int displacement = pattern.GetSpread(down, up);
+
+				// TODO: Make it so the tolerance also depends on the size of the pattern
+
+				if (pattern.size - displacement <= selectionTolerance) {
+					swipedPattern = pattern;
+					break;
+				}
+
 			}
+
 		}
 
 		if (swipedPattern != null) swipedPattern.CrushPattern();
@@ -63,22 +74,11 @@ public class PatternChecker : MonoBehaviour {
 	}
 
 	public void RequestPatternCheck (Smashee smashee) { //For a particular smashee
-		CheckBrokenPatterns(smashee);
+		CheckPatternsBroken(smashee);
 		CheckForPatterns(smashee);
 	}
 
-	public void RequestPatternCheck () {
-	
-		// untested
-		foreach (Smashee smashee in SG.GetSmasheesOnGrid()) {
-			CheckForPatterns(smashee);
-		}
-
-	}
-
-	public void CheckBrokenPatterns (Smashee smashee) {
-
-		if (Pattern.activePatterns == null) return;
+	public void CheckPatternsBroken (Smashee smashee) {
 
 		List<Pattern> brokenPatterns = new List<Pattern>();
 
@@ -98,8 +98,8 @@ public class PatternChecker : MonoBehaviour {
 
 	void CheckForPatterns (Smashee smashee) {
 		
-		List<Smashee> horizontalPattern = GetPattern(smashee, horizontal);
-		List<Smashee> verticalPattern = GetPattern(smashee, vertical);
+		List<Smashee> horizontalPattern = GetPossiblePattern(smashee, horizontal);
+		List<Smashee> verticalPattern = GetPossiblePattern(smashee, vertical);
 
 		if (horizontalPattern != null)
 			Pattern.NewPattern(horizontalPattern, Pattern.Orientation.Horizontal);
@@ -108,7 +108,7 @@ public class PatternChecker : MonoBehaviour {
 		
 	}
 
-	List<Smashee> GetPattern (Smashee smashee, Direction direction) {
+	List<Smashee> GetPossiblePattern (Smashee smashee, Direction direction) {
 
 		Vector2 direction1 = direction.direction1; //assiging Vector.zero leads to infinte loop
 		Vector2 direction2 = direction.direction2;

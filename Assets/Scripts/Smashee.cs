@@ -16,9 +16,7 @@ public class Smashee : MonoBehaviour {
 	public Color nonstaticSquareColor;
 
 	public float shapeChangeSpeed = 1f;
-	float timer = 0f;
 
-	Rigidbody2D rb;
 	SmasheeFall sf;
 
 	SmasheeGenerator SG = SmasheeGenerator.SG;
@@ -34,7 +32,6 @@ public class Smashee : MonoBehaviour {
 	public bool debugging = false;
 
 	void Awake() {
-		//rb = GetComponent<Rigidbody2D>();
 		sf = GetComponent<SmasheeFall>();
 
 		shapes = GetComponentsInChildren<ShapeEffect>();
@@ -105,15 +102,6 @@ public class Smashee : MonoBehaviour {
 	public void TriggerPress() {
 		if (isStaticShape) return;
 		CycleShape();
-	}
-
-	void OnMouseDown() { // checks if mouse pressed on collider
-		// shapes[currentShapeCounter].ExecuteUnityEvent();
-//		InputManager.IM.SetDown(this);
-	} 
-
-	void OnMouseUp() {
-//		InputManager.IM.SetUp(this);
 	}
 
 	void CalculateRow() {

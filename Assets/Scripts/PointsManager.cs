@@ -5,14 +5,14 @@ using System.Collections;
 public class PointsManager : MonoBehaviour {
 
 	//Singleton
-	public static PointsManager Points;
+	public static PointsManager PM;
 	public Text pointsText;
 	int points = 0;
 
 	void Awake () {
 	
-		if (Points != null)	Points = new PointsManager ();
-		else Points = this;
+		if (PM == null)	PM = this;
+		else if (PM != this) Destroy(this);
 
 		DontDestroyOnLoad(this);
 	}

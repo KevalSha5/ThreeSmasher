@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public class Pattern {
 
 	public enum Orientation {Undetermined, Horizontal, Vertical};
-	Orientation orientation;
 
 	public static GameObject particlePrefab;
 	ParticleSystem particleSystem;
@@ -14,9 +13,12 @@ public class Pattern {
 	List<Smashee> list;
 	public static List<Pattern> activePatterns;
 
-	Smashee first;
-	Smashee[] middle = new Smashee[2];
-	Smashee last;
+	public int size {get{return list.Count;}}
+
+	public Orientation orientation;
+	public Smashee first;
+	public Smashee[] middle = new Smashee[2];
+	public Smashee last;
 
 
 	public static Pattern NewPattern (List<Smashee> list, Orientation orientation) {
@@ -72,11 +74,11 @@ public class Pattern {
 
 	public void CrushPattern () {
 		foreach (Smashee smashee in list) {
-			PatternChecker.PC.CheckBrokenPatterns(smashee);
+			PatternChecker.PC.CheckPatternsBroken(smashee);
 			MonoBehaviour.Destroy(smashee.gameObject);
 		}
-			
 
+		GetPoints(size);
 		DestoryParticleSystem();
 		RemovePatternFromAll();
 	}
@@ -104,6 +106,18 @@ public class Pattern {
 		particleSystem.Stop();
 	}
 
+	void GetPoints(int smashed) {
+
+		if (smashed == 3) {
+			PointsManager.PM.Gain(3);
+		} else if (smashed == 4) {
+			PointsManager.PM.Gain(6);
+		} else if (smashed == 5) {
+			PointsManager.PM.Gain(15);
+		}
+
+	}
+
 	void OrientParticleSystem () {
 
 		if (particleSystem == null)
@@ -113,14 +127,14 @@ public class Pattern {
 		box.x = Smashee.width;
 		box.z = Smashee.height;
 
-		if (orientation == Orientation.Horizontal) box.x *= list.Count;
-		if (orientation == Orientation.Vertical) box.z *= list.Count;
+		if (orientation == Orientation.Horizontal) box.x *= size;
+		if (orientation == Orientation.Vertical) box.z *= size;
 
 		ParticleSystem.ShapeModule shape = particleSystem.shape;
 		shape.box = box;
 		 
 		Vector3 pos = Vector3.zero;
-		if (list.Count % 2 != 0) {
+		if (size % 2 != 0) {
 			pos.x = middle[0].transform.position.x;
 			pos.y = middle[0].transform.position.y;
 
@@ -159,14 +173,30 @@ public class Pattern {
 		return list.ElementAt(index == 0 ? 1 : 0);
 	}
 
-	void SortList () {
+	public int GetSpread(Smashee one, Smashee two) {
+
 		if (orientation == Orientation.Horizontal) {
-			list.Sort((s1, s2) => s1.column.CompareTo(s2.column));
+			return Mathf.Abs(one.column - two.column);
 
 		} else if (orientation == Orientation.Vertical) {
+			return Mathf.Abs(one.row - two.row);
+
+		} else {
+			return -1;
+		}
+
+	}
+
+	void SortList () {
+		
+		if (orientation == Orientation.Horizontal) {			
+			list.Sort((s1, s2) => s1.column.CompareTo(s2.column));
+
+		} else if (orientation == Orientation.Vertical) {			
 			list.Sort((s1, s2) => s1.row.CompareTo(s2.row));
 
 		}
+
 	}
 
 	void SetFirstLast () {
@@ -178,17 +208,17 @@ public class Pattern {
 
 		if (first == null || last == null) Debug.LogError("Error on Determine Middle");
 
-		if (list.Count %2 == 0) {
+		if (size %2 == 0) {
 
-			int middleIndex1 = list.Count/2;
-			int middleIndex2 = list.Count/2 - 1;
+			int middleIndex1 = size/2;
+			int middleIndex2 = size/2 - 1;
 
 			middle[0] = list.ElementAt(middleIndex1);
 			middle[1] = list.ElementAt(middleIndex2);
 
 		} else {
 
-			int middleIndex = (list.Count - 1)/2;
+			int middleIndex = (size - 1)/2;
 			middle[0] = list.ElementAt(middleIndex);
 
 		}
