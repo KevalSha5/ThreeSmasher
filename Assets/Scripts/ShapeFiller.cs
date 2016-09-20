@@ -20,8 +20,14 @@ public class ShapeFiller : MonoBehaviour {
 
 	void Update () {
 
-		if (fillState == FillState.Filling) AnimateFill();
-		else if (fillState == FillState.Unfilling) AnimateUnfill();
+		if (fillState == FillState.Filling) {
+			AnimateFill();
+		} else if (fillState == FillState.Unfilling) {
+			AnimateUnfill();
+			if (Unfilled()) Destroy(this.gameObject);
+		} 
+
+
 
 	}
 
@@ -53,6 +59,10 @@ public class ShapeFiller : MonoBehaviour {
 		this.fillState = FillState.Unfilling;
 	}
 
+	public bool Unfilled () {
+		return fillerShape.transform.localScale == Vector3.zero;
+	}
+
 	void AnimateFill () {
 
 		Vector3 localScale = fillerShape.transform.localScale;
@@ -64,7 +74,7 @@ public class ShapeFiller : MonoBehaviour {
 	void AnimateUnfill () {
 
 		Vector3 localScale = fillerShape.transform.localScale;
-		localScale = Vector3.Lerp(localScale, Vector3.zero, Time.deltaTime * 2f);
+		localScale = Vector3.Lerp(localScale, Vector3.zero, Time.deltaTime * 5f);
 		fillerShape.transform.localScale = localScale;
 
 	}

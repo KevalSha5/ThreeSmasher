@@ -43,7 +43,7 @@ public class Shape : MonoBehaviour {
 	}
 
 	public void RequestUnfill () {
-		shapeFiller.Unfill();
+		if (shapeFiller) shapeFiller.Unfill();
 	}
 
 }

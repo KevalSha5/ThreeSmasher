@@ -14,11 +14,10 @@ public class Smashee : MonoBehaviour {
 	public int currentShapeCounter = 0;
 	int nextShapeCounter = 0;
 
-
 	SmasheeFall sf;
 
 	SmasheeGenerator SG = SmasheeGenerator.SG;
-	PatternChecker PC = PatternChecker.PC;
+	PatternManager PM = PatternManager.PM;
 
 	public int column;
 	public int row;
@@ -64,7 +63,7 @@ public class Smashee : MonoBehaviour {
 		orderAdded = order++;
 		CalculateRow();
 		SG.AddToGrid(this);
-		PC.RequestPatternCheck(this);
+		PM.RequestPatternCheck(this);
 	}
 
 	void Unsettle () {
@@ -131,6 +130,7 @@ public class Smashee : MonoBehaviour {
 
 	public void Toggle () {
 		if (isStaticShape) return;
+		UnfillShape();
 		CycleShape();
 	}
 

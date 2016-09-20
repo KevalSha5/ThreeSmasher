@@ -9,7 +9,6 @@ public class Pattern {
 	public static GameObject patternHighlight;
 	PatternHighlighter ph;
 
-
 	List<Smashee> list;
 	public static List<Pattern> activePatterns;
 
@@ -20,87 +19,94 @@ public class Pattern {
 	public Smashee[] middle = new Smashee[2];
 	public Smashee last;
 
+	public static void InitStaticVars () {
+		activePatterns = new List<Pattern>();
+		patternHighlight = (GameObject)Resources.Load("PatternHighlight");
+	}	
 
-	public static Pattern NewPattern (List<Smashee> list, Orientation orientation) {
-
-		if (activePatterns == null) activePatterns = new List<Pattern>();
-		if (patternHighlight == null) patternHighlight = (GameObject)Resources.Load("PatternHighlight");
-
-		return new Pattern(list, orientation);
+	public static void NewPattern (List<Smashee> list, Orientation orientation) {
+	
+		Pattern newPattern = new Pattern(list, orientation);
+		AddToActivePatterns(newPattern);
 
 	}
 
-	private Pattern (List<Smashee> list, Orientation orientation) {
+	private Pattern (List<Smashee> patternList, Orientation orientation) {
 
-		this.list = list;
+		// assumes pattern has met required length
+
+		this.list = patternList;
 		this.orientation = orientation;
 
 		SortList();
 		SetFirstLast();
 		SetMiddle();
 
-		Pattern patternToRemove = null;
-		bool adoptedHighlighter = false;
-
 		foreach (Pattern other in activePatterns) {
 			
-			if (this.EqualsPattern(other)) {
+			if (this.EqualsPattern(other)) { 
 				return;
 			}
 			
 			if (this.ContainsPattern(other)) {
-				patternToRemove = other;
-				AdoptPatternHighlighter(other);
-				adoptedHighlighter = true;
-				break;
-			} 
+				AbsorbPattern(other);
+				return;
+			}
 
 		}
 
-		if (!adoptedHighlighter) NewPatternHighlighter(); // brand new 
-		if (patternToRemove != null) patternToRemove.RemovePatternFromAll();
-
-		AddToActivePatterns();
+		NewPatternHighlighter();
 
 	} 
 
 	public void CrushPattern () {
 		foreach (Smashee smashee in list) {
-			PatternChecker.PC.ForgetBrokenPatterns(smashee);
+			if (!this.ContainsSmashee(smashee))
+				PatternManager.PM.RemoveFromPatterns(smashee);
 			MonoBehaviour.Destroy(smashee.gameObject);
 		}
 
 		GetPoints(size);
-		DestroyPatternHighlighter();
-		RemovePatternFromAll();
+		DismissPattern();
 	}
 
-	public void ForgetPattern() {
-		DestroyPatternHighlighter();
-		RemovePatternFromAll();
+	public void DismissPattern() {
+		ClearPatternHighlighter();
+		RemovePatternFromActive(this);
 	}
 
-	public void AddSmashee (Smashee smashee) {
-
-		// Only possible to add to a pattern if 
-		// new smashee is at one of the ends
-
+	public void AbsorbPattern (Pattern other) {
+		AdoptPatternHighlighter(other);
+		RemovePatternFromActive(other);
 	}
 
 	public void RemoveSmashee (Smashee smashee) {
 
-		// If smashee is removed from one of the
-		// ends, check if pattern is still valid.
+		if (!list.Contains(smashee)) return;
 
-		// If smashee is removed from the middle,
-		// see if pattern can be split. 
+		list.Remove(smashee);
+		
+		if (!PatternManager.PM.ValidateLength(size)) {
+			DismissPattern();
+			return;
+		}
+
+		if (smashee == first || smashee == last) {
+			SetFirstLast();
+			ph.AdjustHighlight(this);
+		} else {
+			// pattern has enough on both sides to split pattern
+			// this is temporary solution to splitting
+			DismissPattern();
+			PatternManager.PM.RequestPatternCheck(first);
+			PatternManager.PM.RequestPatternCheck(last);
+		}
 
 	}
 
 	public List<Smashee> GetSmashees() {
 		return list;
 	}
-
 
 	public bool HasEnds (Smashee down, Smashee up) {
 		return (this.first == down && this.last == up) || (this.first == up && this.last == down);
@@ -159,7 +165,7 @@ public class Pattern {
 		ph.AdjustHighlight(this);
 	}
 
-	void DestroyPatternHighlighter () {
+	void ClearPatternHighlighter () {
 		ph.Clear();
 	}
 
@@ -174,6 +180,7 @@ public class Pattern {
 		}
 
 	}
+
 	void SortList () {
 		
 		if (orientation == Orientation.Horizontal) {			
@@ -228,12 +235,17 @@ public class Pattern {
 		}
 	}
 
-	private void AddToActivePatterns () {
-		activePatterns.Add(this);
+	private static void AddToActivePatterns (Pattern pattern) {
+		activePatterns.Add(pattern);
 	}
 
-	private void RemovePatternFromAll () {
-		activePatterns.Remove(this);
+	private static void RemovePatternFromActive (Pattern pattern) {
+		activePatterns.Remove(pattern);
+	}
+
+	public static void LogActivePatterns () {
+		foreach (Pattern p in activePatterns)
+			Debug.Log(p);
 	}
 
 	public override string ToString () {

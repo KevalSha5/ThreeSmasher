@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class InputManager : MonoBehaviour {
 
@@ -25,22 +24,18 @@ public class InputManager : MonoBehaviour {
 		up = smashee;
 
 		CheckPress();
-		ResetPress();
 	}
 
 	void CheckPress() {
 
 		if (down == null || up == null) return;
+
 		if (down == up) {
 			down.Toggle();
-			PatternChecker.PC.RequestPatternCheck(down);
+			PatternManager.PM.HandleSmasheeStateChange(down);
 		} else {
-			PatternChecker.PC.CheckUserSwipedPattern(down, up);
+			PatternManager.PM.CheckUserSwipedPattern(down, up);
 		}
-
-	}
-
-	void ResetPress() {
 
 	}
 
@@ -71,6 +66,12 @@ public class InputManager : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.F2)) {
 
 			SmasheeGenerator.SG.generate = !SmasheeGenerator.SG.generate;
+
+		}
+
+		if (Input.GetKeyDown(KeyCode.F3)) {
+
+			Pattern.LogActivePatterns();
 
 		}
 

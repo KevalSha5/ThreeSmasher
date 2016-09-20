@@ -30,10 +30,6 @@ public class PatternHighlighter : MonoBehaviour {
 
 		currentPoints = new Vector3[] {startPoint, startPoint};
 
-		SetEndpoints(SmasheeGenerator.SG.GetWorldPoint(pattern.first),
-					 SmasheeGenerator.SG.GetWorldPoint(pattern.last));
-
-
 		lr.SetVertexCount(currentPoints.Length);
 		lr.SetPositions(currentPoints);
 
@@ -43,10 +39,7 @@ public class PatternHighlighter : MonoBehaviour {
 
 	public void AdjustHighlight (Pattern pattern) {
 
-		this.pattern = pattern;
- 		
-		SetEndpoints(SmasheeGenerator.SG.GetWorldPoint(pattern.first),
-					 SmasheeGenerator.SG.GetWorldPoint(pattern.last));
+		this.pattern = pattern; 		
 
 		foreach (Smashee smashee in pattern.GetSmashees())
 			smashee.FillShape();
@@ -72,6 +65,9 @@ public class PatternHighlighter : MonoBehaviour {
 	}
 
 	void Update ()	 {
+		
+		SetEndpoints(SmasheeGenerator.SG.GetWorldPoint(pattern.first),
+					 SmasheeGenerator.SG.GetWorldPoint(pattern.last));
 
 		float expandSpeed = Time.deltaTime * 5f;
 		float recedeSpeed = Time.deltaTime * 10f;
