@@ -25,15 +25,14 @@ public class PatternHighlighter : MonoBehaviour {
 
 		this.pattern = pattern;
 
-		startPoint = SmasheeGenerator.SG.SmasheeCenterPoint(pattern.GetLastAdded());
+		startPoint = SmasheeGenerator.SG.GetWorldPoint(pattern.GetLastAdded());
+		startPoint.z = patternDepth;
+
 		currentPoints = new Vector3[] {startPoint, startPoint};
 
-		endA = SmasheeGenerator.SG.SmasheeCenterPoint(pattern.first);
-		endB = SmasheeGenerator.SG.SmasheeCenterPoint(pattern.last);
+		SetEndpoints(SmasheeGenerator.SG.GetWorldPoint(pattern.first),
+					 SmasheeGenerator.SG.GetWorldPoint(pattern.last));
 
-		endA.z = patternDepth;
-		endB.z = patternDepth;
-		startPoint.z = patternDepth;
 
 		lr.SetVertexCount(currentPoints.Length);
 		lr.SetPositions(currentPoints);
@@ -45,9 +44,9 @@ public class PatternHighlighter : MonoBehaviour {
 	public void AdjustHighlight (Pattern pattern) {
 
 		this.pattern = pattern;
-
-		endA = SmasheeGenerator.SG.SmasheeCenterPoint(pattern.first);
-		endB = SmasheeGenerator.SG.SmasheeCenterPoint(pattern.last);
+ 		
+		SetEndpoints(SmasheeGenerator.SG.GetWorldPoint(pattern.first),
+					 SmasheeGenerator.SG.GetWorldPoint(pattern.last));
 
 		foreach (Smashee smashee in pattern.GetSmashees())
 			smashee.FillShape();
@@ -60,6 +59,16 @@ public class PatternHighlighter : MonoBehaviour {
 
 		foreach (Smashee smashee in pattern.GetSmashees())
 			smashee.UnfillShape();
+
+		Destroy(this.gameObject);
+	}
+
+	void SetEndpoints (Vector3 endA, Vector3 endB) {
+		this.endA = endA;
+		this.endB = endB;
+
+		this.endA.z = patternDepth;
+		this.endB.z = patternDepth;
 	}
 
 	void Update ()	 {

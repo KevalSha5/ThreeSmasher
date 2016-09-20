@@ -117,11 +117,11 @@ public class Smashee : MonoBehaviour {
 	}
 
 	public void FillShape () {
-		shapes[currentShapeCounter].Fill();
+		shapes[currentShapeCounter].RequestFill();
 	}
 
 	public void UnfillShape () {
-		shapes[currentShapeCounter].Unfill();
+		shapes[currentShapeCounter].RequestUnfill();
 	}
 
 	public void RequestShape (int newShape) {

@@ -66,7 +66,7 @@ public class Pattern {
 
 	public void CrushPattern () {
 		foreach (Smashee smashee in list) {
-			PatternChecker.PC.CheckPatternsBroken(smashee);
+			PatternChecker.PC.ForgetBrokenPatterns(smashee);
 			MonoBehaviour.Destroy(smashee.gameObject);
 		}
 
@@ -80,35 +80,25 @@ public class Pattern {
 		RemovePatternFromAll();
 	}
 
+	public void AddSmashee (Smashee smashee) {
+
+		// Only possible to add to a pattern if 
+		// new smashee is at one of the ends
+
+	}
+
+	public void RemoveSmashee (Smashee smashee) {
+
+		// If smashee is removed from one of the
+		// ends, check if pattern is still valid.
+
+		// If smashee is removed from the middle,
+		// see if pattern can be split. 
+
+	}
+
 	public List<Smashee> GetSmashees() {
 		return list;
-	}
-
-	void NewPatternHighlighter () {
-		GameObject go = MonoBehaviour.Instantiate(patternHighlight) as GameObject;
-		ph = go.GetComponent<PatternHighlighter>();
-		ph.NewHighlight(this);
-	}
-
-	void AdoptPatternHighlighter (Pattern other) {
-		this.ph = other.ph;
-		ph.AdjustHighlight(this);
-	}
-
-	void DestroyPatternHighlighter () {
-		ph.Clear();
-	}
-
-	void GetPoints(int smashed) {
-
-		if (smashed == 3) {
-			PointsManager.PM.Gain(3);
-		} else if (smashed == 4) {
-			PointsManager.PM.Gain(6);
-		} else if (smashed == 5) {
-			PointsManager.PM.Gain(15);
-		}
-
 	}
 
 
@@ -158,6 +148,32 @@ public class Pattern {
 		return list.OrderBy(s => s.orderAdded).Last();
 	}
 
+	void NewPatternHighlighter () {
+		GameObject go = MonoBehaviour.Instantiate(patternHighlight) as GameObject;
+		ph = go.GetComponent<PatternHighlighter>();
+		ph.NewHighlight(this);
+	}
+
+	void AdoptPatternHighlighter (Pattern other) {
+		this.ph = other.ph;
+		ph.AdjustHighlight(this);
+	}
+
+	void DestroyPatternHighlighter () {
+		ph.Clear();
+	}
+
+	void GetPoints(int smashed) {
+
+		if (smashed == 3) {
+			PointsManager.PM.Gain(3);
+		} else if (smashed == 4) {
+			PointsManager.PM.Gain(6);
+		} else if (smashed == 5) {
+			PointsManager.PM.Gain(15);
+		}
+
+	}
 	void SortList () {
 		
 		if (orientation == Orientation.Horizontal) {			

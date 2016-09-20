@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 
 public class PatternChecker : MonoBehaviour {
@@ -56,7 +55,7 @@ public class PatternChecker : MonoBehaviour {
 
 				int displacement = pattern.GetSpread(down, up);
 
-				// TODO: Make it so the tolerance also depends on the size of the pattern
+				// TODO: Make the tolerance also depends on the size of the pattern
 
 				if (pattern.size - displacement <= selectionTolerance) {
 					swipedPattern = pattern;
@@ -72,11 +71,11 @@ public class PatternChecker : MonoBehaviour {
 	}
 
 	public void RequestPatternCheck (Smashee smashee) { //For a particular smashee
-		CheckPatternsBroken(smashee);
+		ForgetBrokenPatterns(smashee);
 		CheckForPatterns(smashee);
 	}
 
-	public void CheckPatternsBroken (Smashee smashee) {
+	public void ForgetBrokenPatterns (Smashee smashee) {
 
 		List<Pattern> brokenPatterns = new List<Pattern>();
 

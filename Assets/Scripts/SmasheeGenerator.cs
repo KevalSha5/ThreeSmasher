@@ -105,7 +105,7 @@ public class SmasheeGenerator : MonoBehaviour {
 		else return null;
 	}
 
-	public Vector3 SmasheeCenterPoint (Smashee smashee) {
+	public Vector3 GetWorldPoint (Smashee smashee) {
 		return smashee.gameObject.transform.position;
 	}
 

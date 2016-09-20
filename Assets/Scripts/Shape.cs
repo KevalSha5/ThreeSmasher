@@ -28,7 +28,7 @@ public class Shape : MonoBehaviour {
 		gameObject.SetActive(true);
 	}
 
-	public void Fill () {
+	public void RequestFill () {
 
 		GameObject sFillerObj = Instantiate(shapeFillerPrefab, transform.position, transform.rotation) as GameObject;
 		shapeFiller = sFillerObj.GetComponent<ShapeFiller>();
@@ -42,8 +42,7 @@ public class Shape : MonoBehaviour {
 
 	}
 
-	public void Unfill () {
-		Debug.Log("Unfliing " + GetComponentInParent<Smashee>());
+	public void RequestUnfill () {
 		shapeFiller.Unfill();
 	}
 
