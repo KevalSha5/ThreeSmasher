@@ -32,7 +32,7 @@ public class InputManager : MonoBehaviour {
 
 		if (down == null || up == null) return;
 		if (down == up) {
-			down.TriggerPress();
+			down.Toggle();
 			PatternChecker.PC.RequestPatternCheck(down);
 		} else {
 			PatternChecker.PC.CheckUserSwipedPattern(down, up);

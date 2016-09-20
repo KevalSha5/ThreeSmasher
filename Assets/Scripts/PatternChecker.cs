@@ -27,10 +27,8 @@ public class PatternChecker : MonoBehaviour {
 
 	void Awake () {
 
-		if (PC == null)
-			PC = this;
-		else if (PC != this)
-			Destroy(this);
+		if (PC == null)	PC = this;
+		else if (PC != this) Destroy(this);
 
 		DontDestroyOnLoad(this);
 

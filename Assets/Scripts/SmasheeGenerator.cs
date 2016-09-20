@@ -34,12 +34,11 @@ public class SmasheeGenerator : MonoBehaviour {
 		instantiationXPoints = new float[maxColumns];
 		horizontalExtent = Camera.main.orthographicSize * Screen.width / Screen.height;
 
+		// temporarily calculating smashee width here because Smashee is not yet initialized
 		float smasheeWidth = smasheePrefab.GetComponentInChildren<SpriteRenderer>().bounds.extents.x * 2f;
-		float smasheeHeight = smasheePrefab.GetComponentInChildren<SpriteRenderer>().bounds.extents.y * 2f;
-		Smashee.SetDimensions(smasheeWidth, smasheeHeight);
 
 		for (int i = 0; i < maxColumns; i++) {
-			instantiationXPoints[i] = -horizontalExtent + i * Smashee.width + Smashee.width / 2f;
+			instantiationXPoints[i] = -horizontalExtent + i * smasheeWidth + smasheeWidth / 2f;
 		}
 
 	}
@@ -104,6 +103,10 @@ public class SmasheeGenerator : MonoBehaviour {
 
 		if (collider != null) return collider.gameObject.GetComponent<Smashee>();
 		else return null;
+	}
+
+	public Vector3 SmasheeCenterPoint (Smashee smashee) {
+		return smashee.gameObject.transform.position;
 	}
 
 	public void RemoveFromGrid (Smashee smashee) {

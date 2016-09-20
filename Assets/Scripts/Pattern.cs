@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 
 public class Pattern {
 
 	public enum Orientation {Undetermined, Horizontal, Vertical};
 
-	public static GameObject particlePrefab;
-	ParticleSystem particleSystem;
+	public static GameObject patternHighlight;
+	PatternHighlighter ph;
+
 
 	List<Smashee> list;
 	public static List<Pattern> activePatterns;
@@ -24,7 +24,7 @@ public class Pattern {
 	public static Pattern NewPattern (List<Smashee> list, Orientation orientation) {
 
 		if (activePatterns == null) activePatterns = new List<Pattern>();
-		if (particlePrefab == null)	particlePrefab = (GameObject)Resources.Load("PatternFlare");
+		if (patternHighlight == null) patternHighlight = (GameObject)Resources.Load("PatternHighlight");
 
 		return new Pattern(list, orientation);
 
@@ -40,7 +40,7 @@ public class Pattern {
 		SetMiddle();
 
 		Pattern patternToRemove = null;
-		bool adoptedParticleSystem = false;
+		bool adoptedHighlighter = false;
 
 		foreach (Pattern other in activePatterns) {
 			
@@ -50,27 +50,19 @@ public class Pattern {
 			
 			if (this.ContainsPattern(other)) {
 				patternToRemove = other;
-				AdoptParticleSystem(other);
-				adoptedParticleSystem = true;
+				AdoptPatternHighlighter(other);
+				adoptedHighlighter = true;
 				break;
 			} 
 
 		}
 
-		if (!adoptedParticleSystem)	NewParticleSystem(); // brand new 
+		if (!adoptedHighlighter) NewPatternHighlighter(); // brand new 
 		if (patternToRemove != null) patternToRemove.RemovePatternFromAll();
 
 		AddToActivePatterns();
 
 	} 
-
-	private void AddToActivePatterns () {
-		activePatterns.Add(this);
-	}
-
-	private void RemovePatternFromAll () {
-		activePatterns.Remove(this);
-	}
 
 	public void CrushPattern () {
 		foreach (Smashee smashee in list) {
@@ -79,31 +71,32 @@ public class Pattern {
 		}
 
 		GetPoints(size);
-		DestoryParticleSystem();
+		DestroyPatternHighlighter();
 		RemovePatternFromAll();
 	}
 
 	public void ForgetPattern() {
-		DestoryParticleSystem();
+		DestroyPatternHighlighter();
 		RemovePatternFromAll();
 	}
 
-	void NewParticleSystem () {
-		OrientParticleSystem();
-		ActivateParticleSystem();
+	public List<Smashee> GetSmashees() {
+		return list;
 	}
 
-	void AdoptParticleSystem (Pattern other) {
-		this.particleSystem = other.particleSystem;
-		OrientParticleSystem();
+	void NewPatternHighlighter () {
+		GameObject go = MonoBehaviour.Instantiate(patternHighlight) as GameObject;
+		ph = go.GetComponent<PatternHighlighter>();
+		ph.NewHighlight(this);
 	}
 
-	void ActivateParticleSystem () {
-		particleSystem.Play();
+	void AdoptPatternHighlighter (Pattern other) {
+		this.ph = other.ph;
+		ph.AdjustHighlight(this);
 	}
 
-	void DestoryParticleSystem () {
-		particleSystem.Stop();
+	void DestroyPatternHighlighter () {
+		ph.Clear();
 	}
 
 	void GetPoints(int smashed) {
@@ -116,34 +109,6 @@ public class Pattern {
 			PointsManager.PM.Gain(15);
 		}
 
-	}
-
-	void OrientParticleSystem () {
-
-		if (particleSystem == null)
-			particleSystem = (MonoBehaviour.Instantiate(particlePrefab) as GameObject).GetComponent<ParticleSystem>();
-
-		Vector3 box = Vector3.zero;
-		box.x = Smashee.width;
-		box.z = Smashee.height;
-
-		if (orientation == Orientation.Horizontal) box.x *= size;
-		if (orientation == Orientation.Vertical) box.z *= size;
-
-		ParticleSystem.ShapeModule shape = particleSystem.shape;
-		shape.box = box;
-		 
-		Vector3 pos = Vector3.zero;
-		if (size % 2 != 0) {
-			pos.x = middle[0].transform.position.x;
-			pos.y = middle[0].transform.position.y;
-
-		} else {
-			pos.x = (middle[0].transform.position.x + middle[1].transform.position.x) / 2f;
-			pos.y = (middle[0].transform.position.y + middle[1].transform.position.y) / 2f;
-		}
-
-		particleSystem.transform.position = pos;
 	}
 
 
@@ -175,16 +140,22 @@ public class Pattern {
 
 	public int GetSpread(Smashee one, Smashee two) {
 
+		int result = -1;
+
 		if (orientation == Orientation.Horizontal) {
-			return Mathf.Abs(one.column - two.column);
+			result = Mathf.Abs(one.column - two.column);
 
 		} else if (orientation == Orientation.Vertical) {
-			return Mathf.Abs(one.row - two.row);
+			result = Mathf.Abs(one.row - two.row);
 
-		} else {
-			return -1;
-		}
+		} 
 
+		return result;
+
+	}
+
+	public Smashee GetLastAdded () {
+		return list.OrderBy(s => s.orderAdded).Last();
 	}
 
 	void SortList () {
@@ -239,6 +210,14 @@ public class Pattern {
 			(first.column != last.column && first.row != last.row)) {
 			Debug.LogError("Possible Error in DetermineOrientation()");
 		}
+	}
+
+	private void AddToActivePatterns () {
+		activePatterns.Add(this);
+	}
+
+	private void RemovePatternFromAll () {
+		activePatterns.Remove(this);
 	}
 
 	public override string ToString () {
