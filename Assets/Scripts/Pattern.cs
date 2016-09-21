@@ -59,11 +59,11 @@ public class Pattern {
 
 	} 
 
-	public void CrushPattern () {
+	public void SmashPattern () {
 		foreach (Smashee smashee in list) {
 			if (!this.ContainsSmashee(smashee))
 				PatternManager.PM.RemoveFromPatterns(smashee);
-			MonoBehaviour.Destroy(smashee.gameObject);
+			smashee.Smash();
 		}
 
 		GetPoints(size);

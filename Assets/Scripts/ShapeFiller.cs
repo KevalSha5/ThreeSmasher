@@ -17,14 +17,12 @@ public class ShapeFiller : MonoBehaviour {
 
 	}
 
-
 	void Update () {
 
 		if (fillState == FillState.Filling) {
 			AnimateFill();
 		} else if (fillState == FillState.Unfilling) {
 			AnimateUnfill();
-			if (Unfilled()) Destroy(this.gameObject);
 		} 
 
 

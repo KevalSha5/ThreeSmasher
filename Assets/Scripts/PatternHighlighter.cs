@@ -66,6 +66,9 @@ public class PatternHighlighter : MonoBehaviour {
 
 	void Update ()	 {
 		
+		// TODO: Currently updating endpoints on every frame (to deal
+		// with patterns that fall after crushing patterns below it) 
+		// See if its possible to make it more effecient.
 		SetEndpoints(SmasheeGenerator.SG.GetWorldPoint(pattern.first),
 					 SmasheeGenerator.SG.GetWorldPoint(pattern.last));
 

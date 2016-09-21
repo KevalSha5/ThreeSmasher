@@ -64,7 +64,7 @@ public class PatternManager : MonoBehaviour {
 
 		}
 
-		if (swipedPattern != null) swipedPattern.CrushPattern();
+		if (swipedPattern != null) swipedPattern.SmashPattern();
 
 	}
 

@@ -6,7 +6,8 @@ public class Shape : MonoBehaviour {
 	public SpriteRenderer render;
 	public Sprite shapeOutline;
 	public Sprite shapeSolid;
-	public Vector3 shapeScale;	Color shapeColor;
+	public Vector3 shapeScale;
+	Color shapeColor;
 
 	public static GameObject shapeFillerPrefab;
 	public Sprite fillerShape;
@@ -17,6 +18,8 @@ public class Shape : MonoBehaviour {
 			shapeFillerPrefab = Resources.Load("ShapeFiller") as GameObject;
 
 		shapeColor = GetComponent<SpriteRenderer>().color;
+
+		InitShapeFiller();
 	}
 
 
@@ -29,7 +32,14 @@ public class Shape : MonoBehaviour {
 	}
 
 	public void RequestFill () {
+		shapeFiller.Fill();
+	}
 
+	public void RequestUnfill () {
+		if (shapeFiller) shapeFiller.Unfill();
+	}
+
+	void InitShapeFiller () {
 		GameObject sFillerObj = Instantiate(shapeFillerPrefab, transform.position, transform.rotation) as GameObject;
 		shapeFiller = sFillerObj.GetComponent<ShapeFiller>();
 
@@ -38,12 +48,6 @@ public class Shape : MonoBehaviour {
 		Vector3 scale = transform.localScale;
 
 		shapeFiller.Setup(Vector3.zero, fillerShape, Vector3.zero, shapeSolid, scale, shapeColor);
-		shapeFiller.Fill();
-
-	}
-
-	public void RequestUnfill () {
-		if (shapeFiller) shapeFiller.Unfill();
 	}
 
 }

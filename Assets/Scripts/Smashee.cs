@@ -9,7 +9,6 @@ public class Smashee : MonoBehaviour {
 	public Color staticSquareColor;
 	public Color nonstaticSquareColor;
 
-
 	public Shape[] shapes;
 	public int currentShapeCounter = 0;
 	int nextShapeCounter = 0;
@@ -81,7 +80,6 @@ public class Smashee : MonoBehaviour {
 		backgroundRenderer.color = color;
 	}
 
-
 	void SetRandomShape() {
 		nextShapeCounter = Random.Range(0, shapes.Length);
 		ActivateNextShape();
@@ -104,7 +102,7 @@ public class Smashee : MonoBehaviour {
 	}
 
 
-	void CalculateRow() {
+	void CalculateRow () {
 		Vector2 start = transform.position;
 
 		Vector2 end = transform.position;
@@ -113,6 +111,18 @@ public class Smashee : MonoBehaviour {
 		RaycastHit2D[] hits = Physics2D.LinecastAll(start, end, LayerMask.GetMask("Smashee"));
 
 		row = hits.Length - 1; //the raycast will also hit its own collider, so decrement by 1
+	}
+
+	public void Smash () {
+		SG.RemoveFromGrid(this);
+		sf.enabled = false;
+
+		Vector3 pos = transform.position;
+		pos.z = .5f;
+		transform.position = pos;		
+
+		gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+		gameObject.AddComponent<SmasheeSmashed>();
 	}
 
 	public void FillShape () {
@@ -126,6 +136,10 @@ public class Smashee : MonoBehaviour {
 	public void RequestShape (int newShape) {
 		if (newShape < 0 || newShape >= shapes.Length) return;
 		SetShape(newShape);
+	}
+
+	public Shape GetActiveShape () {
+		return shapes[currentShapeCounter];
 	}
 
 	public void Toggle () {
@@ -143,7 +157,6 @@ public class Smashee : MonoBehaviour {
 	}
 
 	void OnDestroy() {
-		SG.RemoveFromGrid(this);
 	}
 
 }
