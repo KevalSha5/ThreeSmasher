@@ -1,13 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class PointsManager : MonoBehaviour {
 
-	//Singleton
 	public static PointsManager PM;
-	public Text pointsText;
+	
+	public Text UIText;
+	float UIExpandRate = .8f;
+	float UIContractRate = .1f;
+	float UIScalingRate = 0;
+	Vector3 UIInitialScale;
+
 	int points = 0;
+
+	private Dictionary<int, int> pointsDictionary = new Dictionary<int, int>()
+	{
+		{3, 3},
+		{4, 6},
+		{5, 15}
+	};
 
 	void Awake () {
 	
@@ -15,23 +27,36 @@ public class PointsManager : MonoBehaviour {
 		else if (PM != this) Destroy(this);
 
 		DontDestroyOnLoad(this);
+
+		UIInitialScale = UIText.transform.localScale;
 	}
 
-	public void Gain(int points) {
-		this.points += points;
-		UpdateUI();
-	}
+	public int GetPointsForSmashing (int numSmashed) {
+	
+		if (!pointsDictionary.ContainsKey(numSmashed)) {
+			Debug.LogError("Points Dictionary did not contain given key");
+			return -1;
+		}
 
-	public void Lose(int points) {
-		this.points -= points;
+		int gain = pointsDictionary[numSmashed];
+		points += gain;
 		UpdateUI();
+
+		return gain;
 	}
 
 	void UpdateUI() {		
-		pointsText.text = points.ToString();
+		UIText.text = points.ToString();
+		UIScalingRate = UIExpandRate;
 	}
-	
+
 	void Update () {
-	
+
+		UIScalingRate -= UIContractRate;
+		Vector3 newScale = UIText.transform.localScale + Vector3.one * UIScalingRate * Time.deltaTime;		
+		if (newScale.magnitude < UIInitialScale.magnitude || newScale.x < 0) newScale = UIInitialScale;
+		UIText.transform.localScale = newScale;
+
 	}
+
 }

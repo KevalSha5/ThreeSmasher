@@ -15,14 +15,14 @@ public class ShapeEffect : MonoBehaviour {
 	}
 
 	public void LosePoints(int points) {
-		PointsManager.PM.Lose(points);
-		PointsFloatingText("-" + points, pointsLostColor);
+		// PointsManager.PM.Lose(points);
+		// PointsFloatingText("-" + points, pointsLostColor);
 		DestorySmashee();
 	}
 
 	public void GainPoints(int points) {
-		PointsManager.PM.Gain(points);
-		PointsFloatingText("+" + points, pointsGainedColor);
+		// PointsManager.PM.Gain(points);
+		// PointsFloatingText("+" + points, pointsGainedColor);
 		DestorySmashee();
 	}
 
@@ -30,10 +30,10 @@ public class ShapeEffect : MonoBehaviour {
 		Destroy(transform.parent.gameObject);
 	}
 
-	void PointsFloatingText(string text, Color color) {
-		GameObject floatingText = (GameObject)Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
-		floatingText.GetComponent<FloatingText>().textMesh.text = text;
-		floatingText.GetComponent<FloatingText>().textMesh.color = color;
-	}
+	// void PointsFloatingText(string text, Color color) {
+	// 	GameObject floatingText = (GameObject)Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
+	// 	floatingText.GetComponent<FloatingTextFactory>().textMesh.text = text;
+	// 	floatingText.GetComponent<FloatingTextFactory>().textMesh.color = color;
+	// }
 
 }

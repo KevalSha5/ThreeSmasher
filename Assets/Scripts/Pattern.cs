@@ -180,13 +180,12 @@ public class Pattern {
 
 	void GetPoints(int smashed) {
 
-		if (smashed == 3) {
-			PointsManager.PM.Gain(3);
-		} else if (smashed == 4) {
-			PointsManager.PM.Gain(6);
-		} else if (smashed == 5) {
-			PointsManager.PM.Gain(15);
-		}
+		int gained = PointsManager.PM.GetPointsForSmashing(size);
+
+		Vector3 centerPoint = (first.transform.position + last.transform.position) / 2;
+		Color color = Color.green;
+
+		FloatingTextFactory.NewText("+" + gained, color, 3.5f, 1.5f, centerPoint, Quaternion.identity);
 
 	}
 

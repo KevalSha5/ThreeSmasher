@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class FloatingText : MonoBehaviour {
 
@@ -12,11 +11,12 @@ public class FloatingText : MonoBehaviour {
 	
 		textColor = textMesh.color;
 
-		textColor.a -= Time.deltaTime * fadeSpeed;
+		textColor.a -= fadeSpeed * Time.deltaTime;
 		textMesh.color = textColor;
+		
 		if (textColor.a <= 0) Destroy(this.gameObject);
 
-		transform.position += Vector3.up * floatSpeed;
+		transform.position += Vector3.up * floatSpeed * Time.deltaTime;
 
 	}
 }
