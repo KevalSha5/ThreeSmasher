@@ -3,10 +3,12 @@
 public class SmasheeSmashed : MonoBehaviour {
 
 	Vector3 velocity;
-	Quaternion rotation;
 	Vector3 gravity;
+	float destroyHeight;
 
 	void Start () {
+
+		destroyHeight = -1 * (Smashee.height + Camera.main.orthographicSize);
 
 		velocity = Vector3.zero;
 
@@ -23,7 +25,8 @@ public class SmasheeSmashed : MonoBehaviour {
 		velocity += gravity * Time.deltaTime;
 		transform.position = transform.position + velocity;
 
-		// TODO: Destory gameobject once out of camera bounds
+		// Destory gameobject once out of camera bounds
+		if (transform.position.y <= destroyHeight) Destroy(gameObject);
 
 	}
 }
