@@ -39,7 +39,7 @@ public class PatternHighlighter : MonoBehaviour {
 
 	public void AdjustHighlight (Pattern pattern) {
 
-		this.pattern = pattern; 		
+		this.pattern = pattern;
 
 		foreach (Smashee smashee in pattern.GetSmashees())
 			smashee.FillShape();

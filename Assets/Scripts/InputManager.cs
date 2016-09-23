@@ -4,13 +4,17 @@ public class InputManager : MonoBehaviour {
 
 	public static InputManager IM;
 
+	public enum SwipeDirection {None, Up, Down, Right, Left};
+
 	Smashee down;
 	Smashee up;
+	public SwipeDirection last;
 
 	void Awake() {
 
 		if (IM == null) IM = this;
 		else if (IM != this) Destroy(this);
+
 
 		DontDestroyOnLoad(this);
 
@@ -22,7 +26,6 @@ public class InputManager : MonoBehaviour {
 
 	public void SetUp(Smashee smashee) {
 		up = smashee;
-
 		CheckPress();
 	}
 
@@ -33,8 +36,16 @@ public class InputManager : MonoBehaviour {
 		if (down == up) {
 			down.Toggle();
 			PatternManager.PM.HandleSmasheeStateChange(down);
+		
+			last = SwipeDirection.None;
+
 		} else {
 			PatternManager.PM.CheckUserSwipedPattern(down, up);
+
+			if (down.column == up.column)
+				last = down.row < up.row ? SwipeDirection.Up : SwipeDirection.Down;
+			else if (down.row == up.row)
+				last = down.column < up.column ? SwipeDirection.Left : SwipeDirection.Right;
 		}
 
 	}

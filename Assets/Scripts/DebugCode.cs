@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class DebugCode : MonoBehaviour {
 
@@ -9,9 +8,9 @@ public class DebugCode : MonoBehaviour {
 
 		SG = SmasheeGenerator.SG;
 
-//		AddingPatternFlare();
-//		AddingPatternHighlighter();
-		Nothing();
+		// AddingPatternFlare();
+		AddingPatternHighlighter();
+		// Nothing();
 
 	}
 	

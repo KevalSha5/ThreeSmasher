@@ -74,11 +74,16 @@ public class PatternManager : MonoBehaviour {
 	}
 
 	public void RemoveFromPatterns (Smashee smashee) {
-
 		foreach (Pattern pattern in Pattern.activePatterns.ToList()) {
 			pattern.RemoveSmashee(smashee);
 		}
+	}
 
+	public void RemoveFromPatternsOtherThan (Smashee smashee, Pattern pattern) {
+		foreach (Pattern p in Pattern.activePatterns.ToList()) {
+			if (p == pattern) continue;
+			p.RemoveSmashee(smashee);
+		}
 	}
 
 	public void RequestPatternCheck (Smashee smashee) { //For a particular smashee

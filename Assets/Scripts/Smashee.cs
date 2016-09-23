@@ -26,6 +26,10 @@ public class Smashee : MonoBehaviour {
 	public static int order = 0;
 	public int orderAdded;
 
+	bool settled {
+		get {return row != -1;}
+	}
+
 	void Awake() {
 
 		if (width == -1) {
@@ -59,7 +63,7 @@ public class Smashee : MonoBehaviour {
 	}
 
 	void Settle () {
-		orderAdded = order++;
+		UpdateOrderAdded();
 		CalculateRow();
 		SG.AddToGrid(this);
 		PM.RequestPatternCheck(this);
@@ -95,12 +99,17 @@ public class Smashee : MonoBehaviour {
 		ActivateNextShape();
 	}
 
-	void ActivateNextShape() {
+	void ActivateNextShape () {
 		shapes[currentShapeCounter].Hide();
 		shapes[nextShapeCounter].Show();
 		currentShapeCounter = nextShapeCounter;
+
+		if (settled) UpdateOrderAdded();
 	}
 
+	void UpdateOrderAdded () {
+		orderAdded = order++;
+	}
 
 	void CalculateRow () {
 		Vector2 start = transform.position;

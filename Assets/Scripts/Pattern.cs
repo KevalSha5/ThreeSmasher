@@ -27,7 +27,30 @@ public class Pattern {
 	public static void NewPattern (List<Smashee> list, Orientation orientation) {
 	
 		Pattern newPattern = new Pattern(list, orientation);
+		bool absorbed = false;
+
+		foreach (Pattern other in activePatterns) {
+				
+			if (newPattern.EqualsPattern(other)) { 
+				return;
+			}
+
+			if (other.ContainsPattern(newPattern)) {
+				// Debug.Log("A worse pattern was being made. Killed it");
+				return;
+			}
+			
+			if (newPattern.ContainsPattern(other)) {
+				newPattern.AbsorbPattern(other);
+				absorbed = true;
+				break;
+			}
+		}
+
+		if (!absorbed) newPattern.NewPatternHighlighter();
+
 		AddToActivePatterns(newPattern);
+		// Debug.Log("New Pattern: " + newPattern);
 
 	}
 
@@ -42,27 +65,11 @@ public class Pattern {
 		SetFirstLast();
 		SetMiddle();
 
-		foreach (Pattern other in activePatterns) {
-			
-			if (this.EqualsPattern(other)) { 
-				return;
-			}
-			
-			if (this.ContainsPattern(other)) {
-				AbsorbPattern(other);
-				return;
-			}
-
-		}
-
-		NewPatternHighlighter();
-
 	} 
 
 	public void SmashPattern () {
 		foreach (Smashee smashee in list) {
-			if (!this.ContainsSmashee(smashee))
-				PatternManager.PM.RemoveFromPatterns(smashee);
+			PatternManager.PM.RemoveFromPatternsOtherThan(smashee, this);
 			smashee.Smash();
 		}
 
@@ -71,6 +78,7 @@ public class Pattern {
 	}
 
 	public void DismissPattern() {
+		Debug.Log("Dismissing" + this);
 		ClearPatternHighlighter();
 		RemovePatternFromActive(this);
 	}
@@ -84,19 +92,20 @@ public class Pattern {
 
 		if (!list.Contains(smashee)) return;
 
-		list.Remove(smashee);
 		
-		if (!PatternManager.PM.ValidateLength(size)) {
+		if (!PatternManager.PM.ValidateLength(size - 1)) {
 			DismissPattern();
 			return;
 		}
 
+		list.Remove(smashee);
+
 		if (smashee == first || smashee == last) {
 			SetFirstLast();
-			ph.AdjustHighlight(this);
+			// ph.AdjustHighlight(this);
 		} else {
-			// pattern has enough on both sides to split pattern
-			// this is temporary solution to splitting
+			// pattern may have enough on both sides to split
+			// pattern, this is temporary solution to splitting
 			DismissPattern();
 			PatternManager.PM.RequestPatternCheck(first);
 			PatternManager.PM.RequestPatternCheck(last);
