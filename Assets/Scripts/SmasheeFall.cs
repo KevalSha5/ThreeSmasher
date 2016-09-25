@@ -13,6 +13,12 @@ public class SmasheeFall : MonoBehaviour {
 	public float initVelocity;
 	float velocity;
 
+	public bool isFalling {
+		get {return currentState == State.Falling;}
+	}
+	public bool isSettled {
+		get {return currentState == State.Settled;}
+	}
 
 	Rigidbody2D rb;
 	BoxCollider2D bc;

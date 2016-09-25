@@ -78,7 +78,7 @@ public class Pattern {
 	}
 
 	public void DismissPattern() {
-		Debug.Log("Dismissing" + this);
+		// Debug.Log("Dismissing" + this);
 		ClearPatternHighlighter();
 		RemovePatternFromActive(this);
 	}

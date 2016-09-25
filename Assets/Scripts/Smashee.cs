@@ -13,7 +13,8 @@ public class Smashee : MonoBehaviour {
 	public int currentShapeCounter = 0;
 	int nextShapeCounter = 0;
 
-	SmasheeFall sf;
+	private SmasheeFall sf;	
+
 
 	SmasheeGenerator SG = SmasheeGenerator.SG;
 	PatternManager PM = PatternManager.PM;
@@ -71,6 +72,7 @@ public class Smashee : MonoBehaviour {
 
 	void Unsettle () {
 		SG.RemoveFromGrid(this);
+		PatternManager.PM.HandleSmasheeStateChange(this);
 		ClearRow();
 	}
 
@@ -120,6 +122,13 @@ public class Smashee : MonoBehaviour {
 		RaycastHit2D[] hits = Physics2D.LinecastAll(start, end, LayerMask.GetMask("Smashee"));
 
 		row = hits.Length - 1; //the raycast will also hit its own collider, so decrement by 1
+	}
+
+	public bool IsFalling () {
+		return sf.currentState == SmasheeFall.State.Falling;
+	}
+	public bool IsSettled () {
+	return sf.currentState == SmasheeFall.State.Settled;
 	}
 
 	public void Smash () {

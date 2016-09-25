@@ -96,6 +96,8 @@ public class PatternManager : MonoBehaviour {
 
 	void CheckForPatterns (Smashee smashee) {
 		
+		if (smashee.IsFalling()) return; // method will work without this; it just ends it quicker
+
 		List<Smashee> horizontalPattern = GetPossiblePattern(smashee, horizontal);
 		List<Smashee> verticalPattern = GetPossiblePattern(smashee, vertical);
 
