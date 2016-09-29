@@ -15,7 +15,7 @@ public class PatternHighlighter : MonoBehaviour {
 	Vector3 endB;
 
 	bool clearing = false;
-	float patternDepth = -1f;
+	float patternDepth = -2f;
 
 	void Awake () {
 		lr = GetComponent<LineRenderer>();

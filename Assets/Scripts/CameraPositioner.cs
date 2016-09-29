@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 
-[ExecuteInEditMode]
-public class CameraUpdater : MonoBehaviour {
+public class CameraPositioner : MonoBehaviour {
 
 	public SpriteRenderer smasheeShape;
 	public SmasheeGenerator smasheeGenerator;
 	int gridWidth;
 
-	void Update () {
+	void Awake () {
 
 		gridWidth = smasheeGenerator.maxColumns;
 
@@ -20,3 +19,4 @@ public class CameraUpdater : MonoBehaviour {
 
 	}
 }
+

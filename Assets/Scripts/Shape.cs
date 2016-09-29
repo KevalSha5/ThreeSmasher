@@ -3,7 +3,6 @@
 public class Shape : MonoBehaviour {
 
 	public string Name;
-	public SpriteRenderer render;
 	public Sprite shapeOutline;
 	public Sprite shapeSolid;
 	public Vector3 shapeScale;
@@ -32,7 +31,7 @@ public class Shape : MonoBehaviour {
 	}
 
 	public void RequestFill () {
-		shapeFiller.Fill();
+		if (shapeFiller) shapeFiller.Fill();
 	}
 
 	public void RequestUnfill () {
@@ -40,12 +39,16 @@ public class Shape : MonoBehaviour {
 	}
 
 	void InitShapeFiller () {
-		GameObject sFillerObj = Instantiate(shapeFillerPrefab, transform.position, transform.rotation) as GameObject;
+
+		Vector3 pos = transform.position;
+		pos.z = -.7f;
+
+		GameObject sFillerObj = Instantiate(shapeFillerPrefab, pos, transform.rotation) as GameObject;
+
 		shapeFiller = sFillerObj.GetComponent<ShapeFiller>();
 
-		shapeFiller.transform.parent = this.transform.parent;
-
-		Vector3 scale = transform.localScale;
+		Vector3 scale = transform.parent.localScale;
+		sFillerObj.transform.parent = transform;
 
 		shapeFiller.Setup(Vector3.zero, fillerShape, Vector3.zero, shapeSolid, scale, shapeColor);
 	}

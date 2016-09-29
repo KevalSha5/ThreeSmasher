@@ -4,6 +4,7 @@
     Properties
     {
         	_StencilID ("Stencil ID", Int) = 0
+           	_MainTex ("Base (RGB)", 2D) = "white" {}
     }
 
     SubShader

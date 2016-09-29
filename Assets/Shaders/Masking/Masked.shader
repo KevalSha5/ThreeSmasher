@@ -11,7 +11,6 @@ Properties
 SubShader
 {
 	Tags { "RenderType"="Opaque" "Queue"="Geometry" }
-	LOD 200
 
 	Stencil
 	{
@@ -21,8 +20,8 @@ SubShader
 	}
 
 	Cull Off
-	ZWrite Off
-	Blend SrcAlpha OneMinusSrcAlpha
+	// ZWrite Off
+	// Blend SrcAlpha OneMinusSrcAlpha
 	Lighting Off
 
 	CGPROGRAM
