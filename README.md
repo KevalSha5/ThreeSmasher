@@ -7,3 +7,6 @@ Steps to get it running:
 2. Import this game
 3. In the project files, navigate to "Scenes" and double click on "Main
 4. Hit play at the top
+
+Heres a developmental preview of the game
+![Alt text](Assets/Screenshots/preview.png "Title")
