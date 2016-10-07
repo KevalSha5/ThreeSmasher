@@ -36,7 +36,7 @@ public class Pattern {
 			}
 
 			if (other.ContainsPattern(newPattern)) {
-				// Debug.Log("A worse pattern was being made. Killed it");
+				// A worse pattern is being made
 				return;
 			}
 			
